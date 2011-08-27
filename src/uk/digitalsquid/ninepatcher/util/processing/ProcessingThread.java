@@ -17,10 +17,6 @@ public final class ProcessingThread {
 		thread.setDaemon(true);
 	}
 	
-	public void start() {
-		thread.start();
-	}
-	
 	public boolean isFull() {
 		return queue.size() >= QUEUE_SIZE;
 	}
@@ -31,6 +27,7 @@ public final class ProcessingThread {
 	 * @throws InterruptedException
 	 */
 	public void queueMessage(ProcessingMessage<?> msg) throws InterruptedException {
+		if(!thread.isAlive()) thread.start();
 		queue.put(msg);
 	}
 	

@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * @author william
  *
  */
-public class SvgLoader extends ImageLoader<Document> {
+public class SvgLoader extends ImageLoader {
 	
 	private TranscoderInput source;
 	
@@ -100,7 +100,6 @@ public class SvgLoader extends ImageLoader<Document> {
 		}
 	}
 
-	@Override
 	public void setSource(Document document) {
 		source = new TranscoderInput(document);
 		generateBounds();
@@ -109,5 +108,10 @@ public class SvgLoader extends ImageLoader<Document> {
 	@Override
 	public Dimension getSize() {
 		return size;
+	}
+
+	@Override
+	public boolean requiresAntialiasing() {
+		return false;
 	}
 }

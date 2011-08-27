@@ -1,19 +1,19 @@
 package uk.digitalsquid.ninepatcher.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.filechooser.FileFilter;
 
-import org.apache.batik.bridge.DocumentLoader;
-import org.apache.batik.bridge.UserAgentAdapter;
-import org.w3c.dom.Document;
-
-import uk.digitalsquid.ninepatcher.util.SvgLoader;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
+import uk.digitalsquid.ninepatcher.util.Session;
 
 /**
  * Main UI element in the program
@@ -23,19 +23,62 @@ import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
 public class MainWindow extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -5010616265178392396L;
 	
-	private ProcessingThread processing = new ProcessingThread();
+	private Session session = new Session();
 	
-	ImagePanel imagePanel;
+	NinePatchPanel imagePanel;
 	
 	public MainWindow() {
-		processing.start();
+		setSize(200, 200);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		
-		imagePanel = new ImagePanel(processing, 5);
-		getContentPane().add(imagePanel, BorderLayout.CENTER);
+		loadComponents();
 		
-		loadImage("file:///home/william/netspoofIconPlain.svg");
+		imagePanel = new NinePatchPanel(session);
+		getContentPane().add(imagePanel, BorderLayout.CENTER);
+	}
+	
+	/**
+	 * Loads the UI
+	 */
+	private void loadComponents() {
+		// Menus
+		{
+			JMenuBar mb = new JMenuBar();
+			JMenu fileMenu = new JMenu("File");
+			fileMenu.add("Load image").addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser fileChooser = new JFileChooser();
+					FileFilter fileFilter = new FileFilter() {
+						
+						@Override
+						public String getDescription() {
+							return "Images (PNG, JPG, GIF, SVG)";
+						}
+						
+						@Override
+						public boolean accept(File f) {
+							String name = f.getName();
+							if(name.endsWith(".svg")) return true;
+							if(name.endsWith(".png")) return true;
+							if(name.endsWith(".jpg")) return true;
+							if(name.endsWith(".gif")) return true;
+							return false;
+						}
+					};
+					fileChooser.setFileFilter(fileFilter);
+					
+					// Load document if accepted.
+					if(fileChooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+						File imageFile = fileChooser.getSelectedFile();
+						session.loadDocument(imageFile.getAbsolutePath());
+					}
+				}
+			});
+			mb.add(fileMenu);
+			getContentPane().add(mb, BorderLayout.NORTH);
+		}
 	}
 
 	@Override public void windowActivated(WindowEvent arg0) { }
@@ -51,33 +94,5 @@ public class MainWindow extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		dispose();
-	}
-	
-	protected void loadImage(final String uri) {
-		ProcessingMessage<SvgLoader> load = new ProcessingMessage<SvgLoader>() {
-
-			@Override
-			public SvgLoader run() {
-				DocumentLoader loader = new DocumentLoader(new UserAgentAdapter());
-				Document doc = null;
-				try {
-					doc = loader.loadDocument(uri);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				return new SvgLoader(doc);
-			}
-
-			@Override
-			public void done(SvgLoader result) {
-				imagePanel.setImageRenderer(result);
-			}
-		};
-		try {
-			processing.queueMessage(load);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 }

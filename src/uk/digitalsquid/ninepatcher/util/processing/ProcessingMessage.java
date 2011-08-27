@@ -12,6 +12,21 @@ import javax.swing.SwingUtilities;
  * 		The object to return to the UI thread
  */
 public abstract class ProcessingMessage<R> {
+	
+	public ProcessingMessage() {}
+	/**
+	 * Constructs this message and tries to run it on the given thread.
+	 * This should only be used when the message is created as an instance as soon as it is called.
+	 * @param thread
+	 */
+	public ProcessingMessage(ProcessingThread thread) {
+		try {
+			thread.queueMessage(this);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public abstract R run();
 	
 	public abstract void done(R result);

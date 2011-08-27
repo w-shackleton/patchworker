@@ -2,43 +2,50 @@ package uk.digitalsquid.ninepatcher.ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 
-import javax.swing.JPanel;
-
 import org.apache.batik.transcoder.TranscoderException;
 
+import uk.digitalsquid.ninepatcher.FileEvents;
 import uk.digitalsquid.ninepatcher.util.ImageLoader;
+import uk.digitalsquid.ninepatcher.util.Session;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
 
-public class ImagePanel extends JPanel implements ComponentListener {
+public class ImagePanel extends PatternPanel implements ComponentListener, FileEvents {
 	private static final long serialVersionUID = -5315690396212360662L;
 	
-	private final ProcessingThread processingThread;
+	private final Session session;
 	
-	private final int border;
+	protected final int border;
 	
-	public ImagePanel(ProcessingThread processingThread, int border) {
+	public ImagePanel(Session session, int border) {
 		this.border = border;
-		this.processingThread = processingThread;
+		this.session = session;
+		session.addListener(this);
 		addComponentListener(this);
 	}
 	
-	private ImageLoader<?> renderer;
+	private ImageLoader renderer;
 	
 	private BufferedImage image;
 	
-	public void setImageRenderer(ImageLoader<?> renderer) {
+	public void setImageRenderer(ImageLoader renderer) {
 		this.renderer = renderer;
+		renderImageInBackground();
 	}
 	
 	private Rectangle drawingArea = new Rectangle();
 	private Rectangle imagePos = new Rectangle();
+	
+	protected Rectangle getImagePos() {
+		return imagePos;
+	}
 	
 	/**
 	 * Computes the position to draw the image in.
@@ -78,8 +85,13 @@ public class ImagePanel extends JPanel implements ComponentListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D)g;
 		if(image != null) {
 			computeImagePosition();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					renderer.requiresAntialiasing() ?
+							RenderingHints.VALUE_ANTIALIAS_ON :
+								RenderingHints.VALUE_ANTIALIAS_OFF);
 			g.drawImage(image, imagePos.x, imagePos.y, imagePos.width, imagePos.height, this);
 		}
 	}
@@ -90,8 +102,16 @@ public class ImagePanel extends JPanel implements ComponentListener {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
+		redrawImage();
+	}
+	
+	/**
+	 * Draws the picture to the screen.
+	 */
+	private void redrawImage() {
 		if(renderer != null) {
 			computeImagePosition();
+			setDrawingRegion(imagePos, 10);
 			renderImageInBackground();
 		}
 	}
@@ -107,7 +127,7 @@ public class ImagePanel extends JPanel implements ComponentListener {
 			now.getTime() - timeOfLastRender.getTime() < 400) return;
 		
 		// if queue is full, don't render now.
-		if(processingThread.isFull()) {
+		if(session.thread.isFull()) {
 			repaint();
 			return;
 		}
@@ -131,9 +151,25 @@ public class ImagePanel extends JPanel implements ComponentListener {
 			}
 		};
 		try {
-			processingThread.queueMessage(msg);
+			session.thread.queueMessage(msg);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void fileOpening() { }
+
+	@Override
+	public void fileOpened() {
+		renderer = session.getLoader();
+		redrawImage();
+	}
+
+	@Override
+	public void openFailed(String reason) {
+		renderer = null;
+		image = null;
+		repaint();
 	}
 }

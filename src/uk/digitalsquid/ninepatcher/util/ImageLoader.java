@@ -11,12 +11,7 @@ import org.apache.batik.transcoder.TranscoderException;
  *
  * @param <S> The source of this renderer
  */
-public abstract class ImageLoader<S> {
-	/**
-	 * Sets the image source to render from
-	 * @param source
-	 */
-	abstract void setSource(S source);
+public abstract class ImageLoader {
 	
 	/**
 	 * Renders an image to a bufferedImage
@@ -26,12 +21,18 @@ public abstract class ImageLoader<S> {
 	 * @throws TranscoderException
 	 */
 	public BufferedImage renderImage(int width, int height) throws TranscoderException {
-		if(width < 0) width = 1;
-		if(height < 0) height = 1;
+		if(width < 10) width = 10;
+		if(height < 10) height = 10;
 		return internalRenderImage(width, height);
 	}
 	
 	protected abstract BufferedImage internalRenderImage(int width, int height) throws TranscoderException;
 	
 	public abstract Dimension getSize();
+	
+	/**
+	 * Returns true if antialiasing should be used for this image source
+	 * @return
+	 */
+	public abstract boolean requiresAntialiasing();
 }
