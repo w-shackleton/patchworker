@@ -20,7 +20,7 @@ import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 public class ImagePanel extends PatternPanel implements ComponentListener, FileEvents {
 	private static final long serialVersionUID = -5315690396212360662L;
 	
-	private final Session session;
+	protected final Session session;
 	
 	protected final int border;
 	

@@ -15,6 +15,7 @@ import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.Document;
 
 import uk.digitalsquid.ninepatcher.FileEvents;
+import uk.digitalsquid.ninepatcher.util.misc.MinMax;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
 
@@ -34,6 +35,23 @@ public final class Session {
 	private String uri;
 	
 	private ImageLoader loader;
+	
+	/**
+	 * The nine-patch content X area
+	 */
+	public final MinMax contentX = new MinMax();
+	/**
+	 * The nine-patch content Y area
+	 */
+	public final MinMax contentY = new MinMax();
+	/**
+	 * The nine-patch stretch X area
+	 */
+	public final MinMax stretchX = new MinMax();
+	/**
+	 * The nine-patch stretch Y area
+	 */
+	public final MinMax stretchY = new MinMax();
 	
 	public Session(ProcessingThread thread) {
 		this.thread = thread;
@@ -141,6 +159,16 @@ public final class Session {
 	private List<FileEvents> broadcastList = new LinkedList<FileEvents>();
 	
 	/**
+	 * Resets the session objects of the 9 patch positions.
+	 */
+	private void resetLocations() {
+		stretchX.setMinMax(0.5f, 0.5f);
+		stretchY.setMinMax(0.5f, 0.5f);
+		contentX.setMinMax(0.25f, 0.75f);
+		contentY.setMinMax(0.25f, 0.75f);
+	}
+	
+	/**
 	 * Calls to these functions broadcast to all registered receivers
 	 */
 	private FileEvents broadcast = new FileEvents() {
@@ -161,6 +189,8 @@ public final class Session {
 		
 		@Override
 		public void fileOpened() {
+			resetLocations();
+			
 			for(FileEvents i : broadcastList) {
 				i.fileOpened();
 			}
