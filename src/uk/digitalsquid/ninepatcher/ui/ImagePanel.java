@@ -84,6 +84,7 @@ public class ImagePanel extends PatternPanel implements ComponentListener, FileE
 	
 	@Override
 	public void paintComponent(Graphics g) {
+		setDrawingRegion(imagePos, 10);
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		if(image != null) {
@@ -111,7 +112,6 @@ public class ImagePanel extends PatternPanel implements ComponentListener, FileE
 	private void redrawImage() {
 		if(renderer != null) {
 			computeImagePosition();
-			setDrawingRegion(imagePos, 10);
 			renderImageInBackground();
 		}
 	}

@@ -38,7 +38,7 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 	
 	private static final Color HANDLE_PAINT = new Color(255, 255, 255);
 	private static final Color STRETCH_PAINT = new Color(0, 255, 0);
-	private static final Color STRETCH_PAINT_BG = new Color(0, 255, 0, 80);
+	private static final Color STRETCH_PAINT_BG = new Color(0, 255, 0, 50);
 	private static final Color CONTENT_PAINT = new Color(255, 0, 0);
 	private static final Color CONTENT_PAINT_BG = new Color(255, 0, 0, 80);
 	
@@ -89,7 +89,7 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 				int yPos1 = (int) (a.y + session.stretchY.getMin() * a.height);
 				int yPos2 = (int) (a.y + session.stretchY.getMax() * a.height);
 				g2.setColor(STRETCH_PAINT_BG);
-				if(!session.stretchX.isLocked()) // Only need if fill will be visible
+				if(!session.stretchY.isLocked()) // Only need if fill will be visible
 					g2.fillRect(a.x, yPos1, a.width, yPos2 - yPos1);
 				g2.setColor(STRETCH_PAINT);
 				g2.drawRect(a.x, yPos1, a.width, yPos2 - yPos1);
@@ -99,7 +99,7 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 				int xPos1 = (int) (a.x + session.stretchX.getMin() * a.width);
 				int xPos2 = (int) (a.x + session.stretchX.getMax() * a.width);
 				g2.setColor(STRETCH_PAINT_BG);
-				if(!session.stretchY.isLocked()) // Only need if fill will be visible
+				if(!session.stretchX.isLocked()) // Only need if fill will be visible
 					g2.fillRect(xPos1, a.y, xPos2 - xPos1, a.height);
 				g2.setColor(STRETCH_PAINT);
 				g2.drawRect(xPos1, a.y, xPos2 - xPos1, a.height);
@@ -129,15 +129,15 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 	}
 	
 	// Catchment areas for resizes
-	private static final Rectangle HANDLE_LEFT_CATCH1 = new Rectangle(-10, -10, 10, 10);
-	private static final Rectangle HANDLE_LEFT_CATCH2 = new Rectangle(-10, 0, 10, 10);
-	private static final Rectangle HANDLE_TOP_CATCH1 = new Rectangle(-10, -10, 10, 10);
-	private static final Rectangle HANDLE_TOP_CATCH2 = new Rectangle(0, -10, 10, 10);
+	private static final Rectangle HANDLE_LEFT_CATCH1 = new Rectangle(-15, -15, 15, 15);
+	private static final Rectangle HANDLE_LEFT_CATCH2 = new Rectangle(-15, 0, 15, 15);
+	private static final Rectangle HANDLE_TOP_CATCH1 = new Rectangle(-15, -15, 15, 15);
+	private static final Rectangle HANDLE_TOP_CATCH2 = new Rectangle(0, -15, 15, 15);
 	
-	private static final Rectangle HANDLE_RIGHT_CATCH1 = new Rectangle(0, -10, 10, 10);
-	private static final Rectangle HANDLE_RIGHT_CATCH2 = new Rectangle(0, 0, 10, 10);
-	private static final Rectangle HANDLE_BOTTOM_CATCH1 = new Rectangle(-10, 0, 10, 10);
-	private static final Rectangle HANDLE_BOTTOM_CATCH2 = new Rectangle(0, 0, 10, 10);
+	private static final Rectangle HANDLE_RIGHT_CATCH1 = new Rectangle(0, -15, 15, 15);
+	private static final Rectangle HANDLE_RIGHT_CATCH2 = new Rectangle(0, 0, 15, 15);
+	private static final Rectangle HANDLE_BOTTOM_CATCH1 = new Rectangle(-15, 0, 15, 15);
+	private static final Rectangle HANDLE_BOTTOM_CATCH2 = new Rectangle(0, 0, 15, 15);
 	
 	private static final int STRETCH_X_MIN = 1;
 	private static final int STRETCH_X_MAX = 2;
@@ -153,9 +153,8 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 
 	@Override public void mouseClicked(MouseEvent e) { }
 	@Override public void mouseEntered(MouseEvent e) { }
-	@Override public void mouseExited(MouseEvent e) { mouseReleased(e); }
+	@Override public void mouseExited(MouseEvent e) { }
 	@Override public void mouseMoved(MouseEvent e) { }
-	
 	@Override public void minMaxChanged() { }
 
 	@Override
@@ -186,6 +185,21 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 			selectedItem = STRETCH_Y_MIN;
 		if(HANDLE_LEFT_CATCH2.contains(mx - x2, my - (sy+sh)))
 			selectedItem = STRETCH_Y_MAX;
+		if(HANDLE_TOP_CATCH1.contains(mx - sx, my - y2))
+			selectedItem = STRETCH_X_MIN;
+		if(HANDLE_TOP_CATCH2.contains(mx - (sx+sw), my - y2))
+			selectedItem = STRETCH_X_MAX;
+		
+		if(HANDLE_RIGHT_CATCH1.contains(mx - (x2+w2), my - cy))
+			selectedItem = CONTENT_Y_MIN;
+		if(HANDLE_RIGHT_CATCH2.contains(mx - (x2+w2), my - (cy+ch)))
+			selectedItem = CONTENT_Y_MAX;
+		if(HANDLE_BOTTOM_CATCH1.contains(mx - cx, my - (y2+h2)))
+			selectedItem = CONTENT_X_MIN;
+		if(HANDLE_BOTTOM_CATCH2.contains(mx - (cx+cw), my - (y2+h2)))
+			selectedItem = CONTENT_X_MAX;
+		
+		mouseDragged(e);
 	}
 
 	@Override

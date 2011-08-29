@@ -15,6 +15,7 @@ public final class MinMax {
 	private final float minBound, maxBound;
 	
 	private boolean locked = false;
+	private boolean mirrored = false;
 	
 	public MinMax() {
 		minBound = 0;
@@ -47,6 +48,8 @@ public final class MinMax {
 		}
 		if(min < minBound) min = minBound;
 		if(max > maxBound) max = maxBound;
+		if(max < minBound) max = minBound;
+		if(min > maxBound) min = maxBound;
 	}
 	
 	/**
@@ -70,6 +73,22 @@ public final class MinMax {
 		return locked;
 	}
 	
+	private void mirror() {
+		if(!isMirrored()) return;
+		float halfWay = (minBound+maxBound)/2;
+		float distOff = ((halfWay-min)+(max-halfWay))/2;
+		min = halfWay - distOff;
+		max = halfWay + distOff;
+	}
+	
+	public void setMirrored(boolean mirrored) {
+		this.mirrored = mirrored;
+		mirror();
+		broadcast.lockChanged();
+	}
+	public boolean isMirrored() {
+		return mirrored;
+	}
 	public float getMin() {
 		return min;
 	}
@@ -80,15 +99,15 @@ public final class MinMax {
 		this.min = min;
 		if(isLocked())
 			max = min;
-		else
-			normalise();
+		mirror();
+		normalise();
 	}
 	public void setMax(float max) {
 		this.max = max;
 		if(isLocked())
 			min = max;
-		else
-			normalise();
+		mirror();
+		normalise();
 	}
 	
 	/**
@@ -99,6 +118,7 @@ public final class MinMax {
 	public void setMinMax(float min, float max) {
 		this.min = min;
 		this.max = max;
+		mirror();
 		normalise();
 	}
 	

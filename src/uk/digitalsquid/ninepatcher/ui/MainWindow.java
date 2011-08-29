@@ -3,16 +3,29 @@ package uk.digitalsquid.ninepatcher.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
+import uk.digitalsquid.ninepatcher.FileEvents;
 import uk.digitalsquid.ninepatcher.util.Session;
 
 /**
@@ -20,22 +33,23 @@ import uk.digitalsquid.ninepatcher.util.Session;
  * @author william
  *
  */
-public class MainWindow extends JFrame implements WindowListener {
+public class MainWindow extends JFrame implements WindowListener, FileEvents {
 	private static final long serialVersionUID = -5010616265178392396L;
 	
 	private Session session = new Session();
 	
 	NinePatchPanel imagePanel;
 	
+	private JMenuItem exportMenuItem;
+	
 	public MainWindow() {
-		setSize(200, 200);
+		session.addListener(this);
+		setTitle("9patcher");
+		setSize(700, 500);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		
 		loadComponents();
-		
-		imagePanel = new NinePatchPanel(session);
-		getContentPane().add(imagePanel, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -46,7 +60,9 @@ public class MainWindow extends JFrame implements WindowListener {
 		{
 			JMenuBar mb = new JMenuBar();
 			JMenu fileMenu = new JMenu("File");
-			fileMenu.add("Load image").addActionListener(new ActionListener() {
+			JMenuItem loadImage = fileMenu.add("Load image");
+			loadImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+			loadImage.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser fileChooser = new JFileChooser();
@@ -76,8 +92,104 @@ public class MainWindow extends JFrame implements WindowListener {
 					}
 				}
 			});
+			
+			exportMenuItem = fileMenu.add("Export");
+			exportMenuItem.setEnabled(false);
+			exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+			exportMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ExportDialog export = new ExportDialog(session);
+					export.setVisible(true);
+				}
+			});
+			
+			JMenuItem exit = fileMenu.add("Exit");
+			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
+			exit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
 			mb.add(fileMenu);
 			getContentPane().add(mb, BorderLayout.NORTH);
+			
+		}
+		
+		JPanel outerPanel = new JPanel();
+		outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.LINE_AXIS));
+		
+		// Left hand side contents
+		{
+			JPanel mainPanel = new JPanel();
+			mainPanel.setLayout(new BorderLayout());
+			
+			imagePanel = new NinePatchPanel(session);
+			mainPanel.add(imagePanel, BorderLayout.CENTER);
+			
+			// Top panel - stretch area settings
+			{
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+				final JCheckBox limit = new JCheckBox("Limit to 1 pixel", true);
+				limit.addItemListener(new ItemListener() {
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						boolean checked = limit.isSelected();
+						session.stretchX.setLocked(checked);
+						session.stretchY.setLocked(checked);
+					}
+				});
+				final JCheckBox mirrored = new JCheckBox("Mirrored");
+				mirrored.addItemListener(new ItemListener() {
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						boolean checked = mirrored.isSelected();
+						session.stretchX.setMirrored(checked);
+						session.stretchY.setMirrored(checked);
+					}
+				});
+				panel.add(Box.createHorizontalGlue());
+				panel.add(new JLabel("Stretch areas: "));
+				panel.add(limit);
+				panel.add(mirrored);
+				panel.add(Box.createHorizontalGlue());
+				
+				mainPanel.add(panel, BorderLayout.NORTH);
+			}
+			// Bottom panel - content area settings
+			{
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+				final JCheckBox mirrorX = new JCheckBox("Mirror X");
+				mirrorX.addItemListener(new ItemListener() {
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						boolean checked = mirrorX.isSelected();
+						session.contentX.setMirrored(checked);
+					}
+				});
+				final JCheckBox mirrorY = new JCheckBox("Mirror Y");
+				mirrorY.addItemListener(new ItemListener() {
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						boolean checked = mirrorY.isSelected();
+						session.contentY.setMirrored(checked);
+					}
+				});
+				panel.add(Box.createHorizontalGlue());
+				panel.add(new JLabel("Content areas: "));
+				panel.add(mirrorX);
+				panel.add(mirrorY);
+				panel.add(Box.createHorizontalGlue());
+				
+				mainPanel.add(panel, BorderLayout.SOUTH);
+			}
+			
+			outerPanel.add(mainPanel);
+			
+			getContentPane().add(outerPanel, BorderLayout.CENTER);
 		}
 	}
 
@@ -94,5 +206,40 @@ public class MainWindow extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		dispose();
+	}
+	
+	private FileLoadingDialog fileLoadingDialog;
+
+	/**
+	 * Opens a dialog showing that the file is opening
+	 */
+	@Override
+	public void fileOpening() {
+		fileLoadingDialog = new FileLoadingDialog();
+		fileLoadingDialog.setVisible(true);
+	}
+
+	/**
+	 *  Closes the dialog showing that a file is opening
+	 */
+	@Override
+	public void fileOpened() {
+		if(fileLoadingDialog == null) return;
+		fileLoadingDialog.setVisible(false);
+		fileLoadingDialog.dispose();
+		fileLoadingDialog = null;
+		
+		exportMenuItem.setEnabled(true);
+	}
+
+	@Override
+	public void openFailed(String reason) {
+		if(fileLoadingDialog == null) return;
+		fileLoadingDialog.setVisible(false);
+		fileLoadingDialog.dispose();
+		fileLoadingDialog = null;
+		exportMenuItem.setEnabled(false);
+		
+		JOptionPane.showMessageDialog(this, "Failed to load image", "Failed to load", JOptionPane.ERROR_MESSAGE);
 	}
 }

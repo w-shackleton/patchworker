@@ -34,6 +34,8 @@ public final class Session {
 	
 	private String uri;
 	
+	private String destination;
+	
 	private ImageLoader loader;
 	
 	/**
@@ -55,14 +57,30 @@ public final class Session {
 	
 	public Session(ProcessingThread thread) {
 		this.thread = thread;
+		stretchX.setLocked(true);
+		stretchY.setLocked(true);
 	}
 	
 	public Session() {
 		thread = new ProcessingThread();
+		stretchX.setLocked(true);
+		stretchY.setLocked(true);
 	}
 
 	public int getType() {
 		return type;
+	}
+
+	/**
+	 * Sets the resource folder in which to store drawables (project/res)
+	 * @param destination
+	 */
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
+	public String getDestination() {
+		return destination;
 	}
 
 	public void loadDocument(final String uri) {
@@ -78,10 +96,13 @@ public final class Session {
 				public SvgLoader run() {
 					DocumentLoader loader = new DocumentLoader(new UserAgentAdapter());
 					Document doc = null;
+					SvgLoader svg = null;
 					try {
 						// Load document
 						doc = loader.loadDocument("file://" + uri);
-					} catch (final IOException e) {
+						svg = new SvgLoader(doc);
+						svg.renderImage(1, 1); // Fully load document tree - could be done better?
+					} catch (final Exception e) { // IOException, TranscoderException
 						// Notify of failure
 						try {
 							SwingUtilities.invokeAndWait(new Runnable() {
@@ -97,7 +118,7 @@ public final class Session {
 						}
 						e.printStackTrace();
 					}
-					return new SvgLoader(doc);
+					return svg;
 				}
 	
 				@Override
@@ -154,6 +175,10 @@ public final class Session {
 
 	public ImageLoader getLoader() {
 		return loader;
+	}
+	
+	public boolean isFileLoaded() {
+		return loader != null;
 	}
 
 	private List<FileEvents> broadcastList = new LinkedList<FileEvents>();
