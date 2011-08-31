@@ -37,5 +37,4 @@ public class RasterLoader extends ImageLoader {
 	public boolean requiresAntialiasing() {
 		return true;
 	}
-
 }

@@ -34,7 +34,7 @@ public final class Session {
 	
 	private String uri;
 	
-	private String destination;
+	private String destination = "";
 	
 	private ImageLoader loader;
 	

@@ -6,24 +6,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import uk.digitalsquid.ninepatcher.util.Exporter;
+import uk.digitalsquid.ninepatcher.util.Exporter.ExportStatus;
 import uk.digitalsquid.ninepatcher.util.Session;
 
-public final class ExportDialog extends JDialog implements WindowListener {
+public final class ExportDialog extends JDialog implements WindowListener, ExportStatus {
 
 	private static final long serialVersionUID = -5624193207054979643L;
 	
@@ -35,6 +42,21 @@ public final class ExportDialog extends JDialog implements WindowListener {
 	
 	private boolean keepAspect = true;
 	
+	// Indicates which DPIs to export
+	private boolean ldpi = true, mdpi = true, hdpi = true, xdpi = true;
+	
+	/**
+	 * The name to save the image as.
+	 */
+	private String imageName;
+	
+	/**
+	 * File type, as given by values in Exporter.java
+	 */
+	private int fileType;
+	
+	private JLabel ldpiStatus, mdpiStatus, hdpiStatus, xdpiStatus;
+	
 	/**
 	 * When true, spinner updates are ignored. Used to stop spinners re-updating each other.
 	 */
@@ -44,6 +66,11 @@ public final class ExportDialog extends JDialog implements WindowListener {
 		this.session = session;
 		setTitle("Export images");
 		addWindowListener(this);
+		
+		File file= new File(session.getUri().replace("file://", ""));
+		String fileName = file.getName();
+		imageName = fileName.substring(0, fileName.lastIndexOf('.'));
+		
 		loadComponents();
 	}
 	
@@ -56,9 +83,10 @@ public final class ExportDialog extends JDialog implements WindowListener {
 			JPanel destPanel = new JPanel();
 			destPanel.setLayout(new BoxLayout(destPanel, BoxLayout.LINE_AXIS));
 			
-			final JLabel dest = new JLabel();
+			final JTextField dest = new JTextField(30);
+			dest.setEnabled(false);
 			
-			JButton setDest = new JButton("Set destination resource folder (<project>/res/)");
+			JButton setDest = new JButton("Change");
 			setDest.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -71,11 +99,13 @@ public final class ExportDialog extends JDialog implements WindowListener {
 				}
 			});
 			
+			destPanel.add(new JLabel("Destination (<project>/res): "));
 			destPanel.add(setDest);
 			destPanel.add(dest);
 			
 			panel.add(destPanel);
 		}
+		panel.add(Box.createVerticalStrut(5));
 		// Size (dip)
 		{
 			JPanel sizePanel = new JPanel();
@@ -140,6 +170,7 @@ public final class ExportDialog extends JDialog implements WindowListener {
 			
 			panel.add(sizePanel);
 		}
+		panel.add(Box.createVerticalStrut(5));
 		
 		// Sizes to generate
 		{
@@ -152,12 +183,129 @@ public final class ExportDialog extends JDialog implements WindowListener {
 			JPanel xdpiPanel = new JPanel();
 			xdpiPanel.setLayout(new BoxLayout(xdpiPanel, BoxLayout.LINE_AXIS));
 			
-			JCheckBox ldpiBox = new JCheckBox("Generate low DPI image");
-			JCheckBox mdpiBox = new JCheckBox("Generate medium DPI image");
-			JCheckBox hdpiBox = new JCheckBox("Generate high DPI image");
-			JCheckBox xdpiBox = new JCheckBox("Generate extra-high DPI image");
+			final JCheckBox ldpiBox = new JCheckBox("Generate low DPI image", true);
+			final JCheckBox mdpiBox = new JCheckBox("Generate medium DPI image", true);
+			final JCheckBox hdpiBox = new JCheckBox("Generate high DPI image", true);
+			final JCheckBox xdpiBox = new JCheckBox("Generate extra-high DPI image", true);
+			
+			ldpiStatus = new JLabel("");
+			mdpiStatus = new JLabel("");
+			hdpiStatus = new JLabel("");
+			xdpiStatus = new JLabel("");
+			
+			ActionListener dpiChange = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ldpi = ldpiBox.isSelected();
+					mdpi = mdpiBox.isSelected();
+					hdpi = hdpiBox.isSelected();
+					xdpi = xdpiBox.isSelected();
+				}
+			};
+			
+			ldpiBox.addActionListener(dpiChange);
+			mdpiBox.addActionListener(dpiChange);
+			hdpiBox.addActionListener(dpiChange);
+			xdpiBox.addActionListener(dpiChange);
+			
+			ldpiPanel.add(ldpiBox);
+			ldpiPanel.add(Box.createHorizontalGlue());
+			ldpiPanel.add(ldpiStatus);
+			mdpiPanel.add(mdpiBox);
+			mdpiPanel.add(Box.createHorizontalGlue());
+			mdpiPanel.add(mdpiStatus);
+			hdpiPanel.add(hdpiBox);
+			hdpiPanel.add(Box.createHorizontalGlue());
+			hdpiPanel.add(hdpiStatus);
+			xdpiPanel.add(xdpiBox);
+			xdpiPanel.add(Box.createHorizontalGlue());
+			xdpiPanel.add(xdpiStatus);
 			
 			panel.add(ldpiPanel);
+			panel.add(Box.createVerticalStrut(5));
+			panel.add(mdpiPanel);
+			panel.add(Box.createVerticalStrut(5));
+			panel.add(hdpiPanel);
+			panel.add(Box.createVerticalStrut(5));
+			panel.add(xdpiPanel);
+		}
+		panel.add(Box.createVerticalStrut(5));
+		
+		// Name
+		{
+			JPanel namePanel = new JPanel();
+			namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.LINE_AXIS));
+			
+			JTextField name = new JTextField(imageName);
+			name.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			
+			namePanel.add(new JLabel("File name:"));
+			namePanel.add(name);
+			
+			panel.add(namePanel);
+		}
+		panel.add(Box.createVerticalStrut(5));
+		
+		// Save buttons & type
+		{
+			final JComboBox fileType = new JComboBox(new DefaultComboBoxModel(new String[] { "PNG", "JPG", "GIF" }));
+			fileType.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					switch(fileType.getSelectedIndex()) {
+					case 0:
+						ExportDialog.this.fileType = Exporter.IMG_PNG;
+						break;
+					case 1:
+						ExportDialog.this.fileType = Exporter.IMG_JPG;
+						break;
+					case 2:
+						ExportDialog.this.fileType = Exporter.IMG_GIF;
+						break;
+					}
+				}
+			});
+			ExportDialog.this.fileType = Exporter.IMG_PNG;
+			
+			JPanel savePanel = new JPanel();
+			savePanel.setLayout(new BoxLayout(savePanel, BoxLayout.LINE_AXIS));
+			
+			JButton cancel = new JButton("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ExportDialog.this.setVisible(false);
+					ExportDialog.this.dispose();
+				}
+			});
+			JButton save = new JButton("Save");
+			save.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						Exporter exporter = new Exporter(session, imageName, ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
+						
+						session.thread.queueMessage(exporter);
+					}
+					catch (IllegalArgumentException e1) {
+						JOptionPane.showMessageDialog(ExportDialog.this, "Please enter valid options", "Invalid options", JOptionPane.ERROR_MESSAGE);
+					} catch (InterruptedException e2) {
+						e2.printStackTrace();
+					}
+				}
+			});
+			
+			savePanel.add(fileType);
+			savePanel.add(Box.createHorizontalGlue());
+			savePanel.add(cancel);
+			savePanel.add(Box.createHorizontalStrut(10));
+			savePanel.add(save);
+			
+			panel.add(savePanel);
 		}
 		
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -174,5 +322,54 @@ public final class ExportDialog extends JDialog implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		dispose();
+	}
+	
+	// EXPORT CALLBACKS
+
+	@Override
+	public void exportStarted(int image) {
+		switch(image) {
+		case ExportStatus.IMAGE_LDPI:
+			ldpiStatus.setText("Exporting...");
+			break;
+		case ExportStatus.IMAGE_MDPI:
+			mdpiStatus.setText("Exporting...");
+			break;
+		case ExportStatus.IMAGE_HDPI:
+			hdpiStatus.setText("Exporting...");
+			break;
+		case ExportStatus.IMAGE_XDPI:
+			xdpiStatus.setText("Exporting...");
+			break;
+		}
+	}
+
+	@Override
+	public void exportFinished(int image) {
+		switch(image) {
+		case ExportStatus.IMAGE_LDPI:
+			ldpiStatus.setText("Done");
+			break;
+		case ExportStatus.IMAGE_MDPI:
+			mdpiStatus.setText("Done");
+			break;
+		case ExportStatus.IMAGE_HDPI:
+			hdpiStatus.setText("Done");
+			break;
+		case ExportStatus.IMAGE_XDPI:
+			xdpiStatus.setText("Done");
+			break;
+		}
+	}
+
+	@Override
+	public void finished() {
+		setVisible(false);
+		dispose();
+	}
+
+	@Override
+	public void error(String error) {
+		JOptionPane.showMessageDialog(this, error, "An error occured", JOptionPane.ERROR_MESSAGE);
 	}
 }
