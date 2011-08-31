@@ -75,6 +75,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 						
 						@Override
 						public boolean accept(File f) {
+							if(f.isDirectory()) return true;
 							String name = f.getName();
 							if(name.endsWith(".svg")) return true;
 							if(name.endsWith(".png")) return true;

@@ -57,6 +57,8 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 	
 	private JLabel ldpiStatus, mdpiStatus, hdpiStatus, xdpiStatus;
 	
+	private JButton save;
+	
 	/**
 	 * When true, spinner updates are ignored. Used to stop spinners re-updating each other.
 	 */
@@ -85,6 +87,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			
 			final JTextField dest = new JTextField(30);
 			dest.setEnabled(false);
+			dest.setText(session.getDestination());
 			
 			JButton setDest = new JButton("Change");
 			setDest.addActionListener(new ActionListener() {
@@ -96,6 +99,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 						session.setDestination(chooser.getSelectedFile().getAbsolutePath());
 						dest.setText(chooser.getSelectedFile().getAbsolutePath());
 					}
+					validateFields();
 				}
 			});
 			
@@ -200,6 +204,8 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 					mdpi = mdpiBox.isSelected();
 					hdpi = hdpiBox.isSelected();
 					xdpi = xdpiBox.isSelected();
+					
+					validateFields();
 				}
 			};
 			
@@ -236,10 +242,12 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			JPanel namePanel = new JPanel();
 			namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.LINE_AXIS));
 			
-			JTextField name = new JTextField(imageName);
+			final JTextField name = new JTextField(imageName);
 			name.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					imageName = name.getText();
+					validateFields();
 				}
 			});
 			
@@ -267,6 +275,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 						ExportDialog.this.fileType = Exporter.IMG_GIF;
 						break;
 					}
+					validateFields();
 				}
 			});
 			ExportDialog.this.fileType = Exporter.IMG_PNG;
@@ -282,7 +291,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 					ExportDialog.this.dispose();
 				}
 			});
-			JButton save = new JButton("Save");
+			save = new JButton("Save");
 			save.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -310,6 +319,13 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		
 		getContentPane().add(panel, BorderLayout.CENTER);
 		pack();
+	}
+	
+	protected void validateFields() {
+		if(!imageName.equals("") && !session.getDestination().equals(""))
+			save.setEnabled(true);
+		else
+			save.setEnabled(false);
 	}
 
 	@Override public void windowActivated(WindowEvent e) { }

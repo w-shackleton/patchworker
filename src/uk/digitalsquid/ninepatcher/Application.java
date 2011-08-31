@@ -10,8 +10,6 @@ public final class Application {
 	 * @param args Arguments
 	 */
 	public static void main(String[] args) {
-		MainWindow win = new MainWindow();
-		
 		// Set system UI if possible
 		 try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -20,6 +18,8 @@ public final class Application {
 		} catch (IllegalAccessException e) {
 		} catch (UnsupportedLookAndFeelException e) {
 		}
+		
+		MainWindow win = new MainWindow();
 		
 		win.setVisible(true);
 	}

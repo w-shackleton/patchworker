@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.Document;
 
 import uk.digitalsquid.ninepatcher.FileEvents;
+import uk.digitalsquid.ninepatcher.PrefMgr;
 import uk.digitalsquid.ninepatcher.util.misc.MinMax;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
@@ -34,7 +36,7 @@ public final class Session {
 	
 	private String uri;
 	
-	private String destination = "";
+	private String destination;
 	
 	private ImageLoader loader;
 	
@@ -59,12 +61,14 @@ public final class Session {
 		this.thread = thread;
 		stretchX.setLocked(true);
 		stretchY.setLocked(true);
+		destination = PrefMgr.getExportUri();
 	}
 	
 	public Session() {
 		thread = new ProcessingThread();
 		stretchX.setLocked(true);
 		stretchY.setLocked(true);
+		destination = PrefMgr.getExportUri();
 	}
 
 	public int getType() {
@@ -72,11 +76,12 @@ public final class Session {
 	}
 
 	/**
-	 * Sets the resource folder in which to store drawables (project/res)
+	 * Sets the resource folder in which to store drawables (project/res). Also sets in preferences.
 	 * @param destination
 	 */
 	public void setDestination(String destination) {
 		this.destination = destination;
+		PrefMgr.setExportUri(destination);
 	}
 
 	public String getDestination() {
@@ -99,7 +104,7 @@ public final class Session {
 					SvgLoader svg = null;
 					try {
 						// Load document
-						doc = loader.loadDocument("file://" + uri);
+						doc = loader.loadDocument(new URI("file", null, uri, null, null).toString());
 						svg = new SvgLoader(doc);
 						svg.renderImage(1, 1); // Fully load document tree - could be done better?
 					} catch (final Exception e) { // IOException, TranscoderException
