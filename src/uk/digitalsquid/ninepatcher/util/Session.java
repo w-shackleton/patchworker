@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -104,7 +103,7 @@ public final class Session {
 					SvgLoader svg = null;
 					try {
 						// Load document
-						doc = loader.loadDocument(new URI("file", null, uri, null, null).toString());
+						doc = loader.loadDocument(new File(uri).toURI().toASCIIString());
 						svg = new SvgLoader(doc);
 						svg.renderImage(1, 1); // Fully load document tree - could be done better?
 					} catch (final Exception e) { // IOException, TranscoderException
