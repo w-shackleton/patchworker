@@ -45,6 +45,10 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
+		// If user doesn't want 9-patch, just return here.
+		if(!showNinePatchParts) return;
+		
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setClip(0, 0, getWidth(), getHeight());
 		// Rectangle imageArea = getImagePos();
@@ -129,15 +133,15 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 	}
 	
 	// Catchment areas for resizes
-	private static final Rectangle HANDLE_LEFT_CATCH1 = new Rectangle(-15, -15, 15, 15);
-	private static final Rectangle HANDLE_LEFT_CATCH2 = new Rectangle(-15, 0, 15, 15);
-	private static final Rectangle HANDLE_TOP_CATCH1 = new Rectangle(-15, -15, 15, 15);
-	private static final Rectangle HANDLE_TOP_CATCH2 = new Rectangle(0, -15, 15, 15);
+	private static final Rectangle HANDLE_LEFT_CATCH1 = new Rectangle(-20, -20, 20, 20);
+	private static final Rectangle HANDLE_LEFT_CATCH2 = new Rectangle(-20, 0, 20, 20);
+	private static final Rectangle HANDLE_TOP_CATCH1 = new Rectangle(-20, -20, 20, 20);
+	private static final Rectangle HANDLE_TOP_CATCH2 = new Rectangle(0, -20, 20, 20);
 	
-	private static final Rectangle HANDLE_RIGHT_CATCH1 = new Rectangle(0, -15, 15, 15);
-	private static final Rectangle HANDLE_RIGHT_CATCH2 = new Rectangle(0, 0, 15, 15);
-	private static final Rectangle HANDLE_BOTTOM_CATCH1 = new Rectangle(-15, 0, 15, 15);
-	private static final Rectangle HANDLE_BOTTOM_CATCH2 = new Rectangle(0, 0, 15, 15);
+	private static final Rectangle HANDLE_RIGHT_CATCH1 = new Rectangle(0, -20, 20, 20);
+	private static final Rectangle HANDLE_RIGHT_CATCH2 = new Rectangle(0, 0, 20, 20);
+	private static final Rectangle HANDLE_BOTTOM_CATCH1 = new Rectangle(-20, 0, 20, 20);
+	private static final Rectangle HANDLE_BOTTOM_CATCH2 = new Rectangle(0, 0, 20, 20);
 	
 	private static final int STRETCH_X_MIN = 1;
 	private static final int STRETCH_X_MAX = 2;
@@ -255,6 +259,15 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 	 */
 	@Override
 	public void lockChanged() {
+		repaint();
+	}
+	
+	protected boolean showNinePatchParts = true;
+
+	// Redraw UI to show/hide drag pins etc.
+	@Override
+	public void drawingNinePatch(boolean isNinePatch) {
+		showNinePatchParts = isNinePatch;
 		repaint();
 	}
 }

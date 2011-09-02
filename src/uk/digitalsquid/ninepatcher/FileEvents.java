@@ -16,4 +16,10 @@ public interface FileEvents {
 	 * @param reason
 	 */
 	public void openFailed(String reason);
+	
+	/**
+	 * This function is called with <code>true</code> if we are currently drawing 9patches, or <code>false</code> if just normal images.
+	 * @param isNinePatch
+	 */
+	public void drawingNinePatch(boolean isNinePatch);
 }

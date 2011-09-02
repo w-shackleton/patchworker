@@ -17,8 +17,7 @@ import org.apache.batik.transcoder.TranscoderException;
 /**
  * Something that can render an image
  * @author william
- *
- * @param <S> The source of this renderer
+ * 
  */
 public abstract class ImageLoader {
 	
@@ -54,51 +53,60 @@ public abstract class ImageLoader {
 	 * @return
 	 * @throws TranscoderException if an error occurs. The message should be shown to the user.
 	 */
-	public final boolean exportImage(final Session session, String destination, int type, int width, int height) throws TranscoderException {
+	public final boolean exportImage(final Session session, String destination, boolean exportNinePatch, int type, int width, int height) throws TranscoderException {
 		try {
 			BufferedImage inner = internalRenderImage(width, height);
-			BufferedImage outer = new BufferedImage(width+2, height+2, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage outer = exportNinePatch ?
+					new BufferedImage(width+2, height+2, BufferedImage.TYPE_INT_ARGB) :
+					new BufferedImage(width  , height  , BufferedImage.TYPE_INT_ARGB); // If not 9patch, create same size image
 			
 			Graphics2D g2 = outer.createGraphics();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.drawImage(inner, 1, 1, width, height, new ImageObserver() {
+			/**
+			 * Where to export the image on the new one
+			 */
+			final int exportPos = exportNinePatch ? 1 : 0;
+			g2.drawImage(inner, exportPos, exportPos, width, height, new ImageObserver() {
 				@Override
 				public boolean imageUpdate(Image img, int infoflags, int x, int y,
 						int width, int height) {
 					return false;
 				}
 			});
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			
-			// Draw 9-patches. Add 1 because of border
-			
-			g2.setColor(Color.BLACK);
-			
-			// X top
-			g2.drawLine(
-					(int) ((float)width * session.stretchX.getMin() + 1),
-					0,
-					(int) ((float)width * session.stretchX.getMax() + 1),
-					0);
-			// Y Left
-			g2.drawLine(
-					0,
-					(int) ((float)height * session.stretchY.getMin() + 1),
-					0,
-					(int) ((float)height * session.stretchY.getMax() + 1));
-			// X Bottom
-			g2.drawLine(
-					(int) ((float)width * session.contentX.getMin() + 1),
-					height+1, // Full width - 1
-					(int) ((float)width * session.contentX.getMax() + 1),
-					height+1); // Full width - 1
-			// Y Right
-			g2.drawLine(
-					width+1, // Full width - 1
-					(int) ((float)height * session.contentY.getMin() + 1),
-					width+1, // Full width - 1
-					(int) ((float)height * session.contentY.getMax() + 1));
-			
+			if(exportNinePatch) {
+				// Draw 9-patches if required. Add 1 because of border
+				
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+				
+				g2.setColor(Color.BLACK);
+				
+				// X top
+				g2.drawLine(
+						(int) ((float)width * session.stretchX.getMin() + 1),
+						0,
+						(int) ((float)width * session.stretchX.getMax() + 1),
+						0);
+				// Y Left
+				g2.drawLine(
+						0,
+						(int) ((float)height * session.stretchY.getMin() + 1),
+						0,
+						(int) ((float)height * session.stretchY.getMax() + 1));
+				// X Bottom
+				g2.drawLine(
+						(int) ((float)width * session.contentX.getMin() + 1),
+						height+1, // Full width - 1
+						(int) ((float)width * session.contentX.getMax() + 1),
+						height+1); // Full width - 1
+				// Y Right
+				g2.drawLine(
+						width+1, // Full width - 1
+						(int) ((float)height * session.contentY.getMin() + 1),
+						width+1, // Full width - 1
+						(int) ((float)height * session.contentY.getMax() + 1));
+				
+			}
 			g2.dispose();
 			
 			// Create parent folders if necessary
@@ -107,6 +115,7 @@ public abstract class ImageLoader {
 			if(folder != null) folder.mkdirs();
 			
 			switch(type) {
+			default:
 			case Exporter.IMG_PNG:
 				ImageIO.write(outer, "PNG", export);
 				break;

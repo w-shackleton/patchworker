@@ -14,6 +14,7 @@ import java.io.File;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -114,6 +115,20 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				}
 			});
 			mb.add(fileMenu);
+			
+			JMenu optionsMenu = new JMenu("Options");
+			final JMenuItem enableNormalImage = new JCheckBoxMenuItem("Export normal images (not 9-patch)");
+			enableNormalImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
+			optionsMenu.add(enableNormalImage);
+			enableNormalImage.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					// update session to notify everything if graphic is a 9patch or not.
+					session.setNinePatch(!enableNormalImage.isSelected());
+				}
+			});
+			mb.add(optionsMenu);
+			
 			getContentPane().add(mb, BorderLayout.NORTH);
 			
 		}
@@ -243,4 +258,6 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 		
 		JOptionPane.showMessageDialog(this, "Failed to load image", "Failed to load", JOptionPane.ERROR_MESSAGE);
 	}
+
+	@Override public void drawingNinePatch(boolean isNinePatch) { }
 }

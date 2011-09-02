@@ -172,4 +172,7 @@ public class ImagePanel extends PatternPanel implements ComponentListener, FileE
 		image = null;
 		repaint();
 	}
+
+	// Ignore this at this level.
+	@Override public void drawingNinePatch(boolean isNinePatch) { }
 }

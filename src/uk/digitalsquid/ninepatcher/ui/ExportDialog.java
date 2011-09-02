@@ -110,6 +110,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			panel.add(destPanel);
 		}
 		panel.add(Box.createVerticalStrut(5));
+		
 		// Size (dip)
 		{
 			JPanel sizePanel = new JPanel();
@@ -317,7 +318,26 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			panel.add(savePanel);
 		}
 		
+		// Message that not exporting 9-patch
+		if(!session.isNinePatch()) {
+			panel.add(Box.createVerticalStrut(5));
+		
+			JPanel msgPanel = new JPanel();
+			msgPanel.setLayout(new BoxLayout(msgPanel, BoxLayout.LINE_AXIS));
+			
+			JLabel label = new JLabel("Not exporting 9-patches, exporting normal images.");
+			
+			msgPanel.add(label);
+			msgPanel.add(Box.createHorizontalGlue());
+			
+			panel.add(msgPanel);
+		}
+		
 		getContentPane().add(panel, BorderLayout.CENTER);
+		getContentPane().add(Box.createHorizontalStrut(5), BorderLayout.WEST);
+		getContentPane().add(Box.createHorizontalStrut(5), BorderLayout.EAST);
+		getContentPane().add(Box.createVerticalStrut(5), BorderLayout.NORTH);
+		getContentPane().add(Box.createVerticalStrut(5), BorderLayout.SOUTH);
 		pack();
 	}
 	

@@ -33,6 +33,11 @@ public final class Session {
 	
 	private int type;
 	
+	/**
+	 * Indicates if we should be exporting and making a 9patch, or just exporting different sized images.
+	 */
+	private boolean isNinePatch = true;
+	
 	private String uri;
 	
 	private String destination;
@@ -85,6 +90,19 @@ public final class Session {
 
 	public String getDestination() {
 		return destination;
+	}
+
+	/**
+	 * Sets whether the user wants to draw 9patches or normal images.
+	 * @param isNinePatch
+	 */
+	public void setNinePatch(boolean isNinePatch) {
+		this.isNinePatch = isNinePatch;
+		broadcast.drawingNinePatch(isNinePatch);
+	}
+
+	public boolean isNinePatch() {
+		return isNinePatch;
 	}
 
 	public void loadDocument(final String uri) {
@@ -222,6 +240,13 @@ public final class Session {
 			
 			for(FileEvents i : broadcastList) {
 				i.fileOpened();
+			}
+		}
+
+		@Override
+		public void drawingNinePatch(final boolean isNinePatch) {
+			for(FileEvents i : broadcastList) {
+				i.drawingNinePatch(isNinePatch);
 			}
 		}
 	};

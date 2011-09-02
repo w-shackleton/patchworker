@@ -49,11 +49,17 @@ public final class Exporter extends ProcessingMessage<String> {
 	 */
 	private final String resFolder;
 	
+	/**
+	 * If true, export 9patch. Otherwise export normal images.
+	 */
+	private final boolean isNinePatch;
+	
 	public Exporter(Session session, String imageName, ExportStatus callback, int fileType, boolean ldpi, boolean mdpi, boolean hdpi, boolean xdpi, int dipx, int dipy) {
 		this.session = session;
 		this.imageName = imageName;
 		this.callback = callback;
 		this.resFolder = session.getDestination();
+		this.isNinePatch = session.isNinePatch();
 		this.ldpi = ldpi;
 		this.mdpi = mdpi;
 		this.hdpi = hdpi;
@@ -80,7 +86,7 @@ public final class Exporter extends ProcessingMessage<String> {
 		int sx = (int) ((float)dipx * scale);
 		int sy = (int) ((float)dipy * scale);
 		
-		session.getLoader().exportImage(session, destination, type, sx, sy);
+		session.getLoader().exportImage(session, destination, isNinePatch, type, sx, sy);
 	}
 
 	/**
@@ -91,9 +97,9 @@ public final class Exporter extends ProcessingMessage<String> {
 	public String run() {
 		String extension = "";
 		switch(fileType) {
-		case IMG_JPG: extension = ".9.jpg"; break;
-		case IMG_PNG: extension = ".9.png"; break;
-		case IMG_GIF: extension = ".9.gif"; break;
+		case IMG_JPG: extension = isNinePatch ? ".9.jpg" : ".jpg"; break;
+		case IMG_PNG: extension = isNinePatch ? ".9.png" : ".png"; break;
+		case IMG_GIF: extension = isNinePatch ? ".9.gif" : ".gif"; break;
 		}
 		String filename = imageName + extension;
 		String path;
@@ -126,6 +132,10 @@ public final class Exporter extends ProcessingMessage<String> {
 		} catch(TranscoderException e) {
 			return e.getMessage();
 		}
+		
+		try {
+			Thread.sleep(400); // Wait so user can see that process is done
+		} catch (InterruptedException e) { }
 		
 		return null;
 	}
