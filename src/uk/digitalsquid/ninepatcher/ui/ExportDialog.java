@@ -27,9 +27,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.digitalsquid.ninepatcher.util.Exporter;
-import uk.digitalsquid.ninepatcher.util.Exporter.ExportStatus;
-import uk.digitalsquid.ninepatcher.util.Session;
+import uk.digitalsquid.ninepatcher.Session;
+import uk.digitalsquid.ninepatcher.img.Exporter;
+import uk.digitalsquid.ninepatcher.img.Exporter.ExportStatus;
 
 public final class ExportDialog extends JDialog implements WindowListener, ExportStatus {
 

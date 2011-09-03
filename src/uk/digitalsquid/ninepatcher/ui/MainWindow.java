@@ -26,9 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
-import uk.digitalsquid.ninepatcher.AboutDialog;
 import uk.digitalsquid.ninepatcher.FileEvents;
-import uk.digitalsquid.ninepatcher.util.Session;
+import uk.digitalsquid.ninepatcher.Session;
 
 /**
  * Main UI element in the program

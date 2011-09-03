@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.ninepatcher.util.misc;
 
 import java.awt.Polygon;
 

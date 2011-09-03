@@ -9,7 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import uk.digitalsquid.ninepatcher.util.Session;
+import uk.digitalsquid.ninepatcher.Session;
+import uk.digitalsquid.ninepatcher.util.misc.Shapes;
 import uk.digitalsquid.ninepatcher.util.misc.MinMax.OnMinMaxChangeListener;
 
 /**

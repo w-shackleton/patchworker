@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher.util;
+package uk.digitalsquid.ninepatcher.img;
 
 import java.io.File;
 
@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.transcoder.TranscoderException;
 
+import uk.digitalsquid.ninepatcher.Session;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 
 /**

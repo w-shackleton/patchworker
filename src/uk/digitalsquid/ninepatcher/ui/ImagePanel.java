@@ -13,8 +13,8 @@ import java.util.Date;
 import org.apache.batik.transcoder.TranscoderException;
 
 import uk.digitalsquid.ninepatcher.FileEvents;
-import uk.digitalsquid.ninepatcher.util.ImageLoader;
-import uk.digitalsquid.ninepatcher.util.Session;
+import uk.digitalsquid.ninepatcher.Session;
+import uk.digitalsquid.ninepatcher.img.ImageLoader;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 
 public class ImagePanel extends PatternPanel implements ComponentListener, FileEvents {

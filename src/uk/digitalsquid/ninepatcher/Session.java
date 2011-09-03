@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher.util;
+package uk.digitalsquid.ninepatcher;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,8 +14,9 @@ import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.Document;
 
-import uk.digitalsquid.ninepatcher.FileEvents;
-import uk.digitalsquid.ninepatcher.PrefMgr;
+import uk.digitalsquid.ninepatcher.img.ImageLoader;
+import uk.digitalsquid.ninepatcher.img.RasterLoader;
+import uk.digitalsquid.ninepatcher.img.SvgLoader;
 import uk.digitalsquid.ninepatcher.util.misc.MinMax;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
 import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;

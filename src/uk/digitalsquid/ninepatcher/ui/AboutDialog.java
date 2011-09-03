@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher;
+package uk.digitalsquid.ninepatcher.ui;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;

@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher.util;
+package uk.digitalsquid.ninepatcher.img;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,6 +13,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.batik.transcoder.TranscoderException;
+
+import uk.digitalsquid.ninepatcher.Session;
 
 /**
  * Something that can render an image

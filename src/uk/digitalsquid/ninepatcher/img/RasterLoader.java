@@ -1,4 +1,4 @@
-package uk.digitalsquid.ninepatcher.util;
+package uk.digitalsquid.ninepatcher.img;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
