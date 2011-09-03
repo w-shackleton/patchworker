@@ -102,7 +102,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 			exportMenuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					ExportDialog export = new ExportDialog(session);
+					ExportDialog export = new ExportDialog(MainWindow.this, session);
 					export.setVisible(true);
 				}
 			});
@@ -245,7 +245,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 	 */
 	@Override
 	public void fileOpening() {
-		fileLoadingDialog = new FileLoadingDialog();
+		fileLoadingDialog = new FileLoadingDialog(this);
 		fileLoadingDialog.setVisible(true);
 	}
 

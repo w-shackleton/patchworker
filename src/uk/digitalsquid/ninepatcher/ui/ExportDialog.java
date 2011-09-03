@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -64,7 +65,8 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 	 */
 	private boolean codeGeneratedChange = false;
 
-	public ExportDialog(Session session) {
+	public ExportDialog(JFrame parent, Session session) {
+		super(parent);
 		this.session = session;
 		setTitle("Export images");
 		addWindowListener(this);
