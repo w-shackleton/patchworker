@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
+import uk.digitalsquid.ninepatcher.AboutDialog;
 import uk.digitalsquid.ninepatcher.FileEvents;
 import uk.digitalsquid.ninepatcher.util.Session;
 
@@ -128,6 +129,19 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				}
 			});
 			mb.add(optionsMenu);
+			
+			JMenu helpMenu = new JMenu("Help");
+			final JMenuItem about = new JMenuItem("About");
+			about.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AboutDialog d = new AboutDialog(MainWindow.this);
+					d.setVisible(true);
+				}
+			});
+			helpMenu.add(about);
+			
+			mb.add(helpMenu);
 			
 			getContentPane().add(mb, BorderLayout.NORTH);
 			

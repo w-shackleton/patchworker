@@ -69,7 +69,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		setTitle("Export images");
 		addWindowListener(this);
 		
-		File file= new File(session.getUri().replace("file://", ""));
+		File file= new File(session.getUri().replace("file://", "").replace("file:", ""));
 		String fileName = file.getName();
 		imageName = fileName.substring(0, fileName.lastIndexOf('.'));
 		
