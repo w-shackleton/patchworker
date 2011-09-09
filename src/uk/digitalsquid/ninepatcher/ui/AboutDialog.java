@@ -39,7 +39,7 @@ public class AboutDialog extends JDialog implements WindowListener {
 			titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.LINE_AXIS));
 			
 			JLabel label = new JLabel("9patcher");
-			label.setFont(label.getFont().deriveFont(24));
+			label.setFont(label.getFont().deriveFont(24f));
 			titlePanel.add(label);
 			
 			panel.add(titlePanel);
@@ -61,6 +61,16 @@ public class AboutDialog extends JDialog implements WindowListener {
 			descPanel.setLayout(new BoxLayout(descPanel, BoxLayout.LINE_AXIS));
 			
 			JLabel label = new JLabel("for Android development");
+			descPanel.add(label);
+			
+			panel.add(descPanel);
+		}
+		// Desc3
+		{
+			JPanel descPanel = new JPanel();
+			descPanel.setLayout(new BoxLayout(descPanel, BoxLayout.LINE_AXIS));
+			
+			JLabel label = new JLabel("digitalsquid.co.uk");
 			descPanel.add(label);
 			
 			panel.add(descPanel);

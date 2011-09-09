@@ -23,7 +23,7 @@ public final class Exporter extends ProcessingMessage<String> {
 	private static final String DRAWABLE_LDPI = "drawable-ldpi";
 	private static final String DRAWABLE_MDPI = "drawable-mdpi";
 	private static final String DRAWABLE_HDPI = "drawable-hdpi";
-	private static final String DRAWABLE_XDPI = "drawable-xdpi";
+	private static final String DRAWABLE_XDPI = "drawable-xhdpi";
 	
 	private final int fileType;
 	
