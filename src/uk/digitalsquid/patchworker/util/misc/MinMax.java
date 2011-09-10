@@ -74,7 +74,7 @@ public final class MinMax {
 	
 	/**
 	 * Gets the distance between the two points.
-	 * @return
+	 * @return the range of this {@link MinMax}
 	 */
 	public float gap() {
 		return max - min;

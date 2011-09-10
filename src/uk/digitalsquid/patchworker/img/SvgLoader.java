@@ -72,7 +72,7 @@ public class SvgLoader extends ImageLoader {
 	 * Renders the given image at the given size
 	 * @param width
 	 * @param height
-	 * @return
+	 * @return the new image
 	 */
 	@Override
 	protected BufferedImage internalRenderImage(int width, int height) throws TranscoderException {

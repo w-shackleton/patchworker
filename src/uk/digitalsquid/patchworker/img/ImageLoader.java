@@ -47,7 +47,7 @@ public abstract class ImageLoader {
 	 * Renders an image to a bufferedImage
 	 * @param width
 	 * @param height
-	 * @return
+	 * @return The new image
 	 * @throws TranscoderException
 	 */
 	public BufferedImage renderImage(int width, int height) throws TranscoderException {
@@ -62,7 +62,7 @@ public abstract class ImageLoader {
 	
 	/**
 	 * Returns true if antialiasing should be used for this image source
-	 * @return
+	 * @return <code>true</code> if it is required
 	 */
 	public abstract boolean requiresAntialiasing();
 	
@@ -72,7 +72,7 @@ public abstract class ImageLoader {
 	 * @param type The type as according to Exporter
 	 * @param width
 	 * @param height
-	 * @return
+	 * @return true on success
 	 * @throws TranscoderException if an error occurs. The message should be shown to the user.
 	 */
 	public final boolean exportImage(final Session session, String destination, boolean exportNinePatch, int type, int width, int height) throws TranscoderException {
