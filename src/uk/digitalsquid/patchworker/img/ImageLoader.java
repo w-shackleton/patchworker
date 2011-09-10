@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.img;
+package uk.digitalsquid.patchworker.img;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,7 +34,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.batik.transcoder.TranscoderException;
 
-import uk.digitalsquid.ninepatcher.Session;
+import uk.digitalsquid.patchworker.Session;
 
 /**
  * Something that can render an image

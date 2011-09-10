@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -47,9 +47,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import uk.digitalsquid.ninepatcher.Session;
-import uk.digitalsquid.ninepatcher.img.Exporter;
-import uk.digitalsquid.ninepatcher.img.Exporter.ExportStatus;
+import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.img.Exporter;
+import uk.digitalsquid.patchworker.img.Exporter.ExportStatus;
 
 public final class ExportDialog extends JDialog implements WindowListener, ExportStatus {
 

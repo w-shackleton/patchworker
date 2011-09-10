@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.patchworker.ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -32,10 +32,10 @@ import java.util.Date;
 
 import org.apache.batik.transcoder.TranscoderException;
 
-import uk.digitalsquid.ninepatcher.FileEvents;
-import uk.digitalsquid.ninepatcher.Session;
-import uk.digitalsquid.ninepatcher.img.ImageLoader;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
+import uk.digitalsquid.patchworker.FileEvents;
+import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.img.ImageLoader;
+import uk.digitalsquid.patchworker.util.processing.ProcessingMessage;
 
 public class ImagePanel extends PatternPanel implements ComponentListener, FileEvents {
 	private static final long serialVersionUID = -5315690396212360662L;

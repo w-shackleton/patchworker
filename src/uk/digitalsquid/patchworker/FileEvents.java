@@ -18,47 +18,34 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher;
-
-import java.io.File;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
+package uk.digitalsquid.patchworker;
 
 /**
- * Manages preferences.
+ * File events. These callbacks are always done on the UI thread.
  * @author william
  *
  */
-public final class PrefMgr {
-	
-	private static final Preferences prefs = Preferences.userNodeForPackage(PrefMgr.class);
-
-	public static String getExportUri() {
-		return prefs.get("exportUri", "");
-	}
-	
-	public static void setExportUri(String uri) {
-		prefs.put("exportUri", uri);
-		sync();
-	}
-	
-	public static File getLoadDirectory() {
-		return new File(prefs.get("loadDirectory", ""));
-	}
-	
-	public static void setLoadDirectory(File folder) {
-		prefs.put("loadDirectory", folder.getAbsolutePath());
-		sync();
-	}
+public interface FileEvents {
 	
 	/**
-	 * Syncs the preferences. Ignores errors.
+	 * A file has started to load
 	 */
-	private static void sync() {
-		try {
-			prefs.sync();
-		} catch (BackingStoreException e) {
-			e.printStackTrace();
-		}
-	}
+	public void fileOpening();
+	
+	/**
+	 * The file has opened successfully
+	 */
+	public void fileOpened();
+	
+	/**
+	 * The file failed to open. This also signifies that the file was 'unloaded' - its state shoud be cleared.
+	 * @param reason
+	 */
+	public void openFailed(String reason);
+	
+	/**
+	 * This function is called with <code>true</code> if we are currently drawing 9patches, or <code>false</code> if just normal images.
+	 * @param isNinePatch
+	 */
+	public void drawingNinePatch(boolean isNinePatch);
 }

@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.util.misc;
+package uk.digitalsquid.patchworker.util.misc;
 
 import java.awt.Polygon;
 

@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.img;
+package uk.digitalsquid.patchworker.img;
 
 import java.io.File;
 
@@ -26,8 +26,8 @@ import javax.swing.SwingUtilities;
 
 import org.apache.batik.transcoder.TranscoderException;
 
-import uk.digitalsquid.ninepatcher.Session;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
+import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.util.processing.ProcessingMessage;
 
 /**
  * Exports images to the specified place.

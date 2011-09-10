@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
 

@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.img;
+package uk.digitalsquid.patchworker.img;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;

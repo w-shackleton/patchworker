@@ -18,29 +18,43 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher;
+package uk.digitalsquid.patchworker.img;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 
-import uk.digitalsquid.ninepatcher.ui.MainWindow;
+import org.apache.batik.transcoder.TranscoderException;
 
-public final class Application {
-	/**
-	 * @param args Arguments
-	 */
-	public static void main(String[] args) {
-		// Set system UI if possible
-		 try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) { // Just revert to metal UI
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (UnsupportedLookAndFeelException e) {
-		}
-		
-		MainWindow win = new MainWindow();
-		
-		win.setVisible(true);
+/**
+ * Loads a raster image
+ * @author william
+ *
+ */
+public class RasterLoader extends ImageLoader {
+	
+	private BufferedImage image;
+	
+	public RasterLoader(BufferedImage image) {
+		this.image = image;
+	}
+
+	@Override
+	protected BufferedImage internalRenderImage(int width, int height)
+			throws TranscoderException {
+		return image;
+	}
+
+	@Override
+	public Dimension getSize() {
+		return new Dimension(image.getWidth(), image.getHeight());
+	}
+
+	public BufferedImage getImage() {
+		return image;
+	}
+
+	@Override
+	public boolean requiresAntialiasing() {
+		return true;
 	}
 }

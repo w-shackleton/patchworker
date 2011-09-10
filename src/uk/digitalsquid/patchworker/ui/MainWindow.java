@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -46,9 +46,9 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
-import uk.digitalsquid.ninepatcher.FileEvents;
-import uk.digitalsquid.ninepatcher.PrefMgr;
-import uk.digitalsquid.ninepatcher.Session;
+import uk.digitalsquid.patchworker.FileEvents;
+import uk.digitalsquid.patchworker.PrefMgr;
+import uk.digitalsquid.patchworker.Session;
 
 /**
  * Main UI element in the program

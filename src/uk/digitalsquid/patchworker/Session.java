@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher;
+package uk.digitalsquid.patchworker;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,12 +34,12 @@ import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.w3c.dom.Document;
 
-import uk.digitalsquid.ninepatcher.img.ImageLoader;
-import uk.digitalsquid.ninepatcher.img.RasterLoader;
-import uk.digitalsquid.ninepatcher.img.SvgLoader;
-import uk.digitalsquid.ninepatcher.util.misc.MinMax;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingMessage;
-import uk.digitalsquid.ninepatcher.util.processing.ProcessingThread;
+import uk.digitalsquid.patchworker.img.ImageLoader;
+import uk.digitalsquid.patchworker.img.RasterLoader;
+import uk.digitalsquid.patchworker.img.SvgLoader;
+import uk.digitalsquid.patchworker.util.misc.MinMax;
+import uk.digitalsquid.patchworker.util.processing.ProcessingMessage;
+import uk.digitalsquid.patchworker.util.processing.ProcessingThread;
 
 /**
  * Holds info about the current file session

@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.ui;
+package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,9 +29,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import uk.digitalsquid.ninepatcher.Session;
-import uk.digitalsquid.ninepatcher.util.misc.Shapes;
-import uk.digitalsquid.ninepatcher.util.misc.MinMax.OnMinMaxChangeListener;
+import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.util.misc.Shapes;
+import uk.digitalsquid.patchworker.util.misc.MinMax.OnMinMaxChangeListener;
 
 /**
  * A panel that draws and allows changes to 9-patches.

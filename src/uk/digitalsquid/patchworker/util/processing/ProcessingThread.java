@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.digitalsquid.ninepatcher.util.processing;
+package uk.digitalsquid.patchworker.util.processing;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.BlockingQueue;
