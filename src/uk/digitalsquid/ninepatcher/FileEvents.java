@@ -26,11 +26,17 @@ package uk.digitalsquid.ninepatcher;
  *
  */
 public interface FileEvents {
+	
+	/**
+	 * A file has started to load
+	 */
 	public void fileOpening();
+	
 	/**
 	 * The file has opened successfully
 	 */
 	public void fileOpened();
+	
 	/**
 	 * The file failed to open. This also signifies that the file was 'unloaded' - its state shoud be cleared.
 	 * @param reason

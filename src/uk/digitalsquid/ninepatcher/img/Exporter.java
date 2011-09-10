@@ -40,6 +40,9 @@ public final class Exporter extends ProcessingMessage<String> {
 	public static final int IMG_PNG = 2;
 	public static final int IMG_GIF = 3;
 	
+	/**
+	 * Export folder names
+	 */
 	private static final String DRAWABLE_LDPI = "drawable-ldpi";
 	private static final String DRAWABLE_MDPI = "drawable-mdpi";
 	private static final String DRAWABLE_HDPI = "drawable-hdpi";
@@ -49,10 +52,14 @@ public final class Exporter extends ProcessingMessage<String> {
 	
 	private final Session session;
 	
-	// Which sizes to render
+	/**
+	 * <code>true</code> if this size should be rendered.
+	 */
 	private final boolean ldpi, mdpi, hdpi, xdpi;
 	
-	// The size in DIP.
+	/**
+	 * The size in DIP
+	 */
 	private final int dipx, dipy;
 	
 	/**

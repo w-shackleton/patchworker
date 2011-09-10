@@ -20,6 +20,7 @@
 
 package uk.digitalsquid.ninepatcher;
 
+import java.io.File;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -38,6 +39,15 @@ public final class PrefMgr {
 	
 	public static void setExportUri(String uri) {
 		prefs.put("exportUri", uri);
+		sync();
+	}
+	
+	public static File getLoadDirectory() {
+		return new File(prefs.get("loadDirectory", ""));
+	}
+	
+	public static void setLoadDirectory(File folder) {
+		prefs.put("loadDirectory", folder.getAbsolutePath());
 		sync();
 	}
 	

@@ -126,6 +126,10 @@ public final class Session {
 		return isNinePatch;
 	}
 
+	/**
+	 * Loads a file given by the filename
+	 * @param uri
+	 */
 	public void loadDocument(final String uri) {
 		this.uri = uri;
 		if(uri.endsWith(".svg")) {

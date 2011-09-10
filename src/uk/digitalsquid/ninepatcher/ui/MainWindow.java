@@ -47,6 +47,7 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
 import uk.digitalsquid.ninepatcher.FileEvents;
+import uk.digitalsquid.ninepatcher.PrefMgr;
 import uk.digitalsquid.ninepatcher.Session;
 
 /**
@@ -87,6 +88,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setCurrentDirectory(PrefMgr.getLoadDirectory());
 					FileFilter fileFilter = new FileFilter() {
 						
 						@Override
@@ -111,6 +113,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 					if(fileChooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
 						File imageFile = fileChooser.getSelectedFile();
 						session.loadDocument(imageFile.getAbsolutePath());
+						PrefMgr.setLoadDirectory(fileChooser.getCurrentDirectory());
 					}
 				}
 			});
