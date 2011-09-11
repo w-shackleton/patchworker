@@ -1,0 +1,12 @@
+[Desktop Entry]
+Categories=Graphics;
+Comment=Easily draw 9-patch graphics for Android
+Encoding=UTF-8
+Exec=patchworker
+GenericName=Patchworker
+Hidden=false
+Icon=/usr/share/pixmaps/patchworker.png
+Name=patchworker
+StartupNotify=false
+Terminal=false
+Type=Application
