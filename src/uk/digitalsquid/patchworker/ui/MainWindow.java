@@ -30,6 +30,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -46,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
+import uk.digitalsquid.patchworker.Application;
 import uk.digitalsquid.patchworker.FileEvents;
 import uk.digitalsquid.patchworker.PrefMgr;
 import uk.digitalsquid.patchworker.Session;
@@ -66,7 +68,13 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 	
 	public MainWindow() {
 		session.addListener(this);
-		setTitle("9patcher");
+		setTitle("Patchworker");
+		try {
+			setIconImages(Application.getAppIcons());
+		} catch (IOException e) {
+			// Doesn't matter if not
+			e.printStackTrace();
+		}
 		setSize(700, 500);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);

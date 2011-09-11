@@ -20,6 +20,12 @@
 
 package uk.digitalsquid.patchworker;
 
+import java.awt.Image;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -42,5 +48,23 @@ public final class Application {
 		MainWindow win = new MainWindow();
 		
 		win.setVisible(true);
+	}
+	
+	private static List<Image> appIcons;
+	
+	/**
+	 * Gets the application icon
+	 * @return A list of loaded images
+	 * @throws IOException if an image fails to load
+	 */
+	public static List<Image> getAppIcons() throws IOException {
+		if(appIcons != null) return appIcons;
+		
+		appIcons = new ArrayList<Image>(3);
+		appIcons.add(ImageIO.read(Application.class.getResource("images/icon8.png")));
+		appIcons.add(ImageIO.read(Application.class.getResource("images/icon32.png")));
+		appIcons.add(ImageIO.read(Application.class.getResource("images/icon64.png")));
+		
+		return appIcons;
 	}
 }

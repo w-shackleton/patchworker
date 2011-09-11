@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -47,6 +48,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import uk.digitalsquid.patchworker.Application;
 import uk.digitalsquid.patchworker.Session;
 import uk.digitalsquid.patchworker.img.Exporter;
 import uk.digitalsquid.patchworker.img.Exporter.ExportStatus;
@@ -89,6 +91,12 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		super(parent);
 		this.session = session;
 		setTitle("Export images");
+		try {
+			setIconImages(Application.getAppIcons());
+		} catch (IOException e) {
+			// Doesn't matter if not
+			e.printStackTrace();
+		}
 		addWindowListener(this);
 		
 		File file= new File(session.getUri().replace("file://", "").replace("file:", ""));

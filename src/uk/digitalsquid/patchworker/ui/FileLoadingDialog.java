@@ -21,11 +21,14 @@
 package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 
 import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import uk.digitalsquid.patchworker.Application;
 
 public class FileLoadingDialog extends JDialog {
 	private static final long serialVersionUID = -7142909793317157942L;
@@ -33,6 +36,12 @@ public class FileLoadingDialog extends JDialog {
 	public FileLoadingDialog(JFrame parent) {
 		super(parent);
 		setTitle("Loading image");
+		try {
+			setIconImages(Application.getAppIcons());
+		} catch (IOException e) {
+			// Doesn't matter if not
+			e.printStackTrace();
+		}
 		
 		getContentPane().add(new JLabel("Loading image..."), BorderLayout.CENTER);
 		

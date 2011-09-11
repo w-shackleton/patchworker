@@ -23,6 +23,7 @@ package uk.digitalsquid.patchworker.ui;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,6 +31,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import uk.digitalsquid.patchworker.Application;
 
 /**
  * About dialog
@@ -44,6 +47,12 @@ public class AboutDialog extends JDialog implements WindowListener {
 		super(owner);
 		addWindowListener(this);
 		setTitle("About");
+		try {
+			setIconImages(Application.getAppIcons());
+		} catch (IOException e) {
+			// Doesn't matter if not
+			e.printStackTrace();
+		}
 		loadComponents();
 		validate();
 		pack();
