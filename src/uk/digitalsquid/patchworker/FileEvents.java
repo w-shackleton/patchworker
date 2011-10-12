@@ -20,6 +20,8 @@
 
 package uk.digitalsquid.patchworker;
 
+import uk.digitalsquid.patchworker.util.misc.MinMax;
+
 /**
  * File events. These callbacks are always done on the UI thread.
  * @author william
@@ -48,4 +50,19 @@ public interface FileEvents {
 	 * @param isNinePatch
 	 */
 	public void drawingNinePatch(boolean isNinePatch);
+	
+	/**
+	 * Called when one of the dimensions of one of the axes is changed.
+	 */
+	public void minMaxChanged();
+	
+	/**
+	 * Called when the lock / mirror settings are changed for one of the {@link MinMax}
+	 */
+	public void minMaxLockChanged();
+	
+	/**
+	 * Called when a big change happens to a MinMax
+	 */
+	public void minMaxCountChanged();
 }

@@ -68,31 +68,45 @@ public final class Session {
 	/**
 	 * The nine-patch content X area
 	 */
-	public final MinMax contentX = new MinMax();
+	private final MinMax contentX;
 	/**
 	 * The nine-patch content Y area
 	 */
-	public final MinMax contentY = new MinMax();
+	private final MinMax contentY;
 	/**
 	 * The nine-patch stretch X area
 	 */
-	public final MinMax stretchX = new MinMax();
+	private MinMax[] stretchX;
 	/**
 	 * The nine-patch stretch Y area
 	 */
-	public final MinMax stretchY = new MinMax();
+	private MinMax[] stretchY;
 	
 	public Session(ProcessingThread thread) {
+		contentX = new MinMax(broadcast);
+		contentY = new MinMax(broadcast);
+		stretchX = new MinMax[1];
+		stretchX[0] = new MinMax(broadcast);
+		stretchX[0].setLocked(true);
+		stretchY = new MinMax[1];
+		stretchY[0] = new MinMax(broadcast);
+		stretchY[0].setLocked(true);
+		
 		this.thread = thread;
-		stretchX.setLocked(true);
-		stretchY.setLocked(true);
 		destination = PrefMgr.getExportUri();
 	}
 	
 	public Session() {
+		contentX = new MinMax(broadcast);
+		contentY = new MinMax(broadcast);
+		stretchX = new MinMax[1];
+		stretchX[0] = new MinMax(broadcast);
+		stretchX[0].setLocked(true);
+		stretchY = new MinMax[1];
+		stretchY[0] = new MinMax(broadcast);
+		stretchY[0].setLocked(true);
+		
 		thread = new ProcessingThread();
-		stretchX.setLocked(true);
-		stretchY.setLocked(true);
 		destination = PrefMgr.getExportUri();
 	}
 
@@ -234,12 +248,102 @@ public final class Session {
 	 * Resets the session objects of the 9 patch positions.
 	 */
 	private void resetLocations() {
-		stretchX.setMinMax(0.5f, 0.5f);
-		stretchY.setMinMax(0.5f, 0.5f);
-		contentX.setMinMax(0.25f, 0.75f);
-		contentY.setMinMax(0.25f, 0.75f);
+		resetLocations(false);
 	}
 	
+	/**
+	 * Resets the session objects of the 9 patch positions.
+	 * @param onlyStretch If true, only resets the stretch areas.
+	 */
+	private void resetLocations(boolean onlyStretch) {
+		// Spread out over equal area
+		for(int i = 0; i < getStretchXCount(); i++) {
+			getStretchX(i).setMinMax(((float)i+1) / ((float)getStretchXCount()+1));
+		}
+		for(int i = 0; i < getStretchYCount(); i++) {
+			getStretchY(i).setMinMax(((float)i+1) / ((float)getStretchYCount()+1));
+		}
+		if(!onlyStretch) {
+			getContentX().setMinMax(0.25f, 0.75f);
+			getContentY().setMinMax(0.25f, 0.75f);
+		}
+	}
+	
+	public MinMax getContentX() {
+		return contentX;
+	}
+
+	public MinMax getContentY() {
+		return contentY;
+	}
+
+	/**
+	 * Gets the X stretch areas. Don't modify the array contents; the {@link MinMax} themselves can be modified however.
+	 * @return
+	 */
+	public MinMax[] getStretchX() {
+		return stretchX;
+	}
+	
+	/**
+	 * Gets the nth X stretch area
+	 * @param index
+	 * @return
+	 */
+	public MinMax getStretchX(int index) {
+		return stretchX[index];
+	}
+	public int getStretchXCount() {
+		return stretchX.length;
+	}
+	/**
+	 * Sets the number of stretch areas on the X
+	 * @param number
+	 */
+	public synchronized void setStretchXCount(int number) {
+		MinMax copyFrom = stretchY[0]; // Should never be less than 1
+		stretchX = new MinMax[number];
+		for(int i = 0; i < number; i++) {
+			stretchX[i] = new MinMax(broadcast);
+			stretchX[i].copyFrom(copyFrom);
+		}
+		resetLocations(true);
+		broadcast.minMaxCountChanged();
+	}
+
+	/**
+	 * Gets the Y stretch areas. Don't modify the array contents; the {@link MinMax} themselves can be modified however.
+	 * @return
+	 */
+	public MinMax[] getStretchY() {
+		return stretchY;
+	}
+	/**
+	 * Gets the nth Y stretch area
+	 * @param index
+	 * @return
+	 */
+	public MinMax getStretchY(int index) {
+		return stretchY[index];
+	}
+	public int getStretchYCount() {
+		return stretchY.length;
+	}
+	/**
+	 * Sets the number of stretch areas on the Y
+	 * @param number
+	 */
+	public synchronized void setStretchYCount(int number) {
+		MinMax copyFrom = stretchY[0]; // Should never be less than 1
+		stretchY = new MinMax[number];
+		for(int i = 0; i < number; i++) {
+			stretchY[i] = new MinMax(broadcast);
+			stretchY[i].copyFrom(copyFrom);
+		}
+		resetLocations(true);
+		broadcast.minMaxCountChanged();
+	}
+
 	/**
 	 * Calls to these functions broadcast to all registered receivers
 	 */
@@ -272,6 +376,27 @@ public final class Session {
 		public void drawingNinePatch(final boolean isNinePatch) {
 			for(FileEvents i : broadcastList) {
 				i.drawingNinePatch(isNinePatch);
+			}
+		}
+
+		@Override
+		public void minMaxChanged() {
+			for(FileEvents i : broadcastList) {
+				i.minMaxChanged();
+			}
+		}
+
+		@Override
+		public void minMaxLockChanged() {
+			for(FileEvents i : broadcastList) {
+				i.minMaxLockChanged();
+			}
+		}
+
+		@Override
+		public void minMaxCountChanged() {
+			for(FileEvents i : broadcastList) {
+				i.minMaxCountChanged();
 			}
 		}
 	};

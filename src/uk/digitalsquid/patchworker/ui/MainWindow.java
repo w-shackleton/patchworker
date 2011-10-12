@@ -21,6 +21,7 @@
 package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -44,13 +45,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import uk.digitalsquid.patchworker.Application;
 import uk.digitalsquid.patchworker.FileEvents;
 import uk.digitalsquid.patchworker.PrefMgr;
 import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.util.misc.MinMax;
 
 /**
  * Main UI element in the program
@@ -197,8 +203,12 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						boolean checked = limit.isSelected();
-						session.stretchX.setLocked(checked);
-						session.stretchY.setLocked(checked);
+						for(MinMax m : session.getStretchX()) {
+							m.setLocked(checked);
+						}
+						for(MinMax m : session.getStretchY()) {
+							m.setLocked(checked);
+						}
 					}
 				});
 				final JCheckBox mirrored = new JCheckBox("Mirrored");
@@ -206,15 +216,61 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						boolean checked = mirrored.isSelected();
-						session.stretchX.setMirrored(checked);
-						session.stretchY.setMirrored(checked);
+						for(MinMax m : session.getStretchX()) {
+							m.setMirrored(checked);
+						}
+						for(MinMax m : session.getStretchY()) {
+							m.setMirrored(checked);
+						}
 					}
 				});
+				
+				// Npatch options
+				final JSpinner patchesX = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+				Dimension size = patchesX.getPreferredSize();
+				size.width = 60;
+				patchesX.setPreferredSize(size);
+				patchesX.setMaximumSize(size);
+				final JSpinner patchesY = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+				patchesY.setPreferredSize(size);
+				patchesY.setMaximumSize(size);
+				
+				patchesX.addChangeListener(new ChangeListener() {
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						int patches = (Integer) patchesX.getModel().getValue();
+						session.setStretchXCount(patches);
+					}
+				});
+				patchesY.addChangeListener(new ChangeListener() {
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						int patches = (Integer) patchesY.getModel().getValue();
+						session.setStretchYCount(patches);
+					}
+				});
+				
 				panel.add(Box.createHorizontalGlue());
 				panel.add(new JLabel("Stretch areas: "));
 				panel.add(limit);
 				panel.add(mirrored);
+				panel.add(Box.createHorizontalStrut(20));
+				
+				panel.add(new JLabel("Number of areas: Left: "));
+				panel.add(patchesY);
+				panel.add(new JLabel("Top: "));
+				panel.add(patchesX);
 				panel.add(Box.createHorizontalGlue());
+				
+				/*
+				JPanel yPanel = new JPanel();
+				yPanel.add(patchesY);
+				panel.add(yPanel);
+				panel.add(new JLabel("Top: "));
+				JPanel xPanel = new JPanel();
+				xPanel.add(patchesX);
+				panel.add(xPanel);
+				 */
 				
 				mainPanel.add(panel, BorderLayout.NORTH);
 			}
@@ -227,7 +283,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						boolean checked = mirrorX.isSelected();
-						session.contentX.setMirrored(checked);
+						session.getContentX().setMirrored(checked);
 					}
 				});
 				final JCheckBox mirrorY = new JCheckBox("Mirror Y");
@@ -235,7 +291,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						boolean checked = mirrorY.isSelected();
-						session.contentY.setMirrored(checked);
+						session.getContentY().setMirrored(checked);
 					}
 				});
 				panel.add(Box.createHorizontalGlue());
@@ -304,4 +360,16 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 	}
 
 	@Override public void drawingNinePatch(boolean isNinePatch) { }
+
+	@Override
+	public void minMaxChanged() {
+	}
+
+	@Override
+	public void minMaxLockChanged() {
+	}
+
+	@Override
+	public void minMaxCountChanged() {
+	}
 }
