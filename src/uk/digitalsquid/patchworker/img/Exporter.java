@@ -133,25 +133,25 @@ public final class Exporter extends ProcessingMessage<String> {
 		String path;
 		
 		try {
-			if(ldpi) {
+			if(ldpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_LDPI);
 				path = resFolder + "/" + DRAWABLE_LDPI + "/" + filename;
 				saveImage(0.75f, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_LDPI);
 			}
-			if(mdpi) {
+			if(mdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_MDPI);
 				path = resFolder + "/" + DRAWABLE_MDPI + "/" + filename;
 				saveImage(1f, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_MDPI);
 			}
-			if(hdpi) {
+			if(hdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_HDPI);
 				path = resFolder + "/" + DRAWABLE_HDPI + "/" + filename;
 				saveImage(1.5f, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_HDPI);
 			}
-			if(xdpi) {
+			if(xdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_XDPI);
 				path = resFolder + "/" + DRAWABLE_XDPI + "/" + filename;
 				saveImage(2f, fileType, path);
@@ -172,6 +172,15 @@ public final class Exporter extends ProcessingMessage<String> {
 	public void done(String result) {
 		if(result == null) callback.finished();
 		else callback.error(result);
+	}
+	
+	boolean cancelled = false;
+	
+	/**
+	 * Cancels the exporting process. Will stop after next completed image.
+	 */
+	public void cancel() {
+		cancelled = true;
 	}
 	
 	public static interface ExportStatus {

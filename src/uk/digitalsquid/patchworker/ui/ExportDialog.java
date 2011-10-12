@@ -83,6 +83,11 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 	private JButton save;
 	
 	/**
+	 * The exporter to use. Running when not null.
+	 */
+	private Exporter exporter;
+	
+	/**
 	 * When true, spinner updates are ignored. Used to stop spinners re-updating each other.
 	 */
 	private boolean codeGeneratedChange = false;
@@ -318,8 +323,12 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			cancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					ExportDialog.this.setVisible(false);
-					ExportDialog.this.dispose();
+					if(exporter == null) { // Not yet started
+						ExportDialog.this.setVisible(false);
+						ExportDialog.this.dispose();
+					} else {
+						exporter.cancel();
+					}
 				}
 			});
 			save = new JButton("Save");
@@ -327,9 +336,11 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						Exporter exporter = new Exporter(session, imageName, ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
+						exporter = new Exporter(session, imageName, ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
 						
 						session.thread.queueMessage(exporter);
+						
+						save.setEnabled(false);
 					}
 					catch (IllegalArgumentException e1) {
 						JOptionPane.showMessageDialog(ExportDialog.this, "Please enter valid options", "Invalid options", JOptionPane.ERROR_MESSAGE);
