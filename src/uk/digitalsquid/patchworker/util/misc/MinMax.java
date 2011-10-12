@@ -23,6 +23,8 @@ package uk.digitalsquid.patchworker.util.misc;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.digitalsquid.patchworker.FileEvents;
+
 /**
  * Represents a minimum and maximum value of something
  * @author william
@@ -37,21 +39,13 @@ public final class MinMax {
 	private boolean locked = false;
 	private boolean mirrored = false;
 	
-	public MinMax() {
+	/**
+	 * 
+	 * @param notifyEvents A broadcast instance of the {@link FileEvents} to broadcast on.
+	 */
+	public MinMax(FileEvents notifyEvents) {
 		minBound = 0;
 		maxBound = 1;
-	}
-	public MinMax(float min, float max) {
-		this.min = min;
-		this.max = max;
-		minBound = 0;
-		maxBound = 1;
-	}
-	public MinMax(float min, float max, float minBound, float maxBound) {
-		this.min = min;
-		this.max = max;
-		this.minBound = minBound;
-		this.maxBound = maxBound;
 	}
 	
 	public void reset() {
@@ -140,6 +134,15 @@ public final class MinMax {
 		this.max = max;
 		mirror();
 		normalise();
+	}
+	
+	/**
+	 * Sets both variables to the same thing
+	 * @param min
+	 * @param max
+	 */
+	public void setMinMax(float both) {
+		setMinMax(both, both);
 	}
 	
 	public void notifyChanged() {

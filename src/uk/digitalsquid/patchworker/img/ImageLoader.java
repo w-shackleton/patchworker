@@ -107,28 +107,28 @@ public abstract class ImageLoader {
 				
 				// X top
 				g2.drawLine(
-						(int) ((float)width * session.stretchX.getMin() + 1),
+						(int) ((float)width * session.getStretchX().getMin() + 1),
 						0,
-						(int) ((float)width * session.stretchX.getMax() + 1),
+						(int) ((float)width * session.getStretchX().getMax() + 1),
 						0);
 				// Y Left
 				g2.drawLine(
 						0,
-						(int) ((float)height * session.stretchY.getMin() + 1),
+						(int) ((float)height * session.getStretchY().getMin() + 1),
 						0,
-						(int) ((float)height * session.stretchY.getMax() + 1));
+						(int) ((float)height * session.getStretchY().getMax() + 1));
 				// X Bottom
 				g2.drawLine(
-						(int) ((float)width * session.contentX.getMin() + 1),
+						(int) ((float)width * session.getContentX().getMin() + 1),
 						height+1, // Full width - 1
-						(int) ((float)width * session.contentX.getMax() + 1),
+						(int) ((float)width * session.getContentX().getMax() + 1),
 						height+1); // Full width - 1
 				// Y Right
 				g2.drawLine(
 						width+1, // Full width - 1
-						(int) ((float)height * session.contentY.getMin() + 1),
+						(int) ((float)height * session.getContentY().getMin() + 1),
 						width+1, // Full width - 1
-						(int) ((float)height * session.contentY.getMax() + 1));
+						(int) ((float)height * session.getContentY().getMax() + 1));
 				
 			}
 			g2.dispose();

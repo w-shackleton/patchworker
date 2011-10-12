@@ -51,10 +51,10 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 		super(session, BORDER_SIZE);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		session.contentX.addListener(this);
-		session.contentY.addListener(this);
-		session.stretchX.addListener(this);
-		session.stretchY.addListener(this);
+		session.getContentX().addListener(this);
+		session.getContentY().addListener(this);
+		session.getStretchX().addListener(this);
+		session.getStretchY().addListener(this);
 	}
 	
 	private static final Color HANDLE_PAINT = new Color(255, 255, 255);
@@ -79,52 +79,52 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 		
 		if(a.width * a.height != 0) { // Don't draw if no image
 			// Left
-			g2.translate(+(a.x), +(a.y + session.stretchY.getMin() * a.height));
+			g2.translate(+(a.x), +(a.y + session.getStretchY().getMin() * a.height));
 			g2.fillPolygon(Shapes.leftArrow1);
-			g2.translate(-(a.x), -(a.y + session.stretchY.getMin() * a.height));
-			g2.translate(+(a.x), +(a.y + session.stretchY.getMax() * a.height));
+			g2.translate(-(a.x), -(a.y + session.getStretchY().getMin() * a.height));
+			g2.translate(+(a.x), +(a.y + session.getStretchY().getMax() * a.height));
 			g2.fillPolygon(Shapes.leftArrow2);
-			g2.translate(-(a.x), -(a.y + session.stretchY.getMax() * a.height));
+			g2.translate(-(a.x), -(a.y + session.getStretchY().getMax() * a.height));
 			// Right
-			g2.translate(+(a.x + a.width), +(a.y + session.contentY.getMin() * a.height));
+			g2.translate(+(a.x + a.width), +(a.y + session.getContentY().getMin() * a.height));
 			g2.fillPolygon(Shapes.rightArrow1);
-			g2.translate(-(a.x + a.width), -(a.y + session.contentY.getMin() * a.height));
-			g2.translate(+(a.x + a.width), +(a.y + session.contentY.getMax() * a.height));
+			g2.translate(-(a.x + a.width), -(a.y + session.getContentY().getMin() * a.height));
+			g2.translate(+(a.x + a.width), +(a.y + session.getContentY().getMax() * a.height));
 			g2.fillPolygon(Shapes.rightArrow2);
-			g2.translate(-(a.x + a.width), -(a.y + session.contentY.getMax() * a.height));
+			g2.translate(-(a.x + a.width), -(a.y + session.getContentY().getMax() * a.height));
 			// Top
-			g2.translate(+(a.x + session.stretchX.getMin() * a.width), +(a.y));
+			g2.translate(+(a.x + session.getStretchX().getMin() * a.width), +(a.y));
 			g2.fillPolygon(Shapes.topArrow1);
-			g2.translate(-(a.x + session.stretchX.getMin() * a.width), -(a.y));
-			g2.translate(+(a.x + session.stretchX.getMax() * a.width), +(a.y));
+			g2.translate(-(a.x + session.getStretchX().getMin() * a.width), -(a.y));
+			g2.translate(+(a.x + session.getStretchX().getMax() * a.width), +(a.y));
 			g2.fillPolygon(Shapes.topArrow2);
-			g2.translate(-(a.x + session.stretchX.getMax() * a.width), -(a.y));
+			g2.translate(-(a.x + session.getStretchX().getMax() * a.width), -(a.y));
 			// Bottom
-			g2.translate(+(a.x + session.contentX.getMin() * a.width), +(a.y + a.height));
+			g2.translate(+(a.x + session.getContentX().getMin() * a.width), +(a.y + a.height));
 			g2.fillPolygon(Shapes.bottomArrow1);
-			g2.translate(-(a.x + session.contentX.getMin() * a.width), -(a.y + a.height));
-			g2.translate(+(a.x + session.contentX.getMax() * a.width), +(a.y + a.height));
+			g2.translate(-(a.x + session.getContentX().getMin() * a.width), -(a.y + a.height));
+			g2.translate(+(a.x + session.getContentX().getMax() * a.width), +(a.y + a.height));
 			g2.fillPolygon(Shapes.bottomArrow2);
-			g2.translate(-(a.x + session.contentX.getMax() * a.width), -(a.y + a.height));
+			g2.translate(-(a.x + session.getContentX().getMax() * a.width), -(a.y + a.height));
 			
 			// Draw stretch
 			g2.setStroke(new BasicStroke(2));
 			// Stretch Y
 			{
-				int yPos1 = (int) (a.y + session.stretchY.getMin() * a.height);
-				int yPos2 = (int) (a.y + session.stretchY.getMax() * a.height);
+				int yPos1 = (int) (a.y + session.getStretchY().getMin() * a.height);
+				int yPos2 = (int) (a.y + session.getStretchY().getMax() * a.height);
 				g2.setColor(STRETCH_PAINT_BG);
-				if(!session.stretchY.isLocked()) // Only need if fill will be visible
+				if(!session.getStretchY().isLocked()) // Only need if fill will be visible
 					g2.fillRect(a.x, yPos1, a.width, yPos2 - yPos1);
 				g2.setColor(STRETCH_PAINT);
 				g2.drawRect(a.x, yPos1, a.width, yPos2 - yPos1);
 			}
 			// Stretch X
 			{
-				int xPos1 = (int) (a.x + session.stretchX.getMin() * a.width);
-				int xPos2 = (int) (a.x + session.stretchX.getMax() * a.width);
+				int xPos1 = (int) (a.x + session.getStretchX().getMin() * a.width);
+				int xPos2 = (int) (a.x + session.getStretchX().getMax() * a.width);
 				g2.setColor(STRETCH_PAINT_BG);
-				if(!session.stretchX.isLocked()) // Only need if fill will be visible
+				if(!session.getStretchX().isLocked()) // Only need if fill will be visible
 					g2.fillRect(xPos1, a.y, xPos2 - xPos1, a.height);
 				g2.setColor(STRETCH_PAINT);
 				g2.drawRect(xPos1, a.y, xPos2 - xPos1, a.height);
@@ -132,10 +132,10 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 			
 			// Content
 			{
-				int x = (int) (a.x + session.contentX.getMin() * a.width);
-				int y = (int) (a.y + session.contentY.getMin() * a.height);
-				int w = (int) (session.contentX.gap() * a.width);
-				int h = (int) (session.contentY.gap() * a.height);
+				int x = (int) (a.x + session.getContentX().getMin() * a.width);
+				int y = (int) (a.y + session.getContentY().getMin() * a.height);
+				int w = (int) (session.getContentX().gap() * a.width);
+				int h = (int) (session.getContentY().gap() * a.height);
 				
 				/*
 				g2.setColor(CONTENT_PAINT_BG);
@@ -187,16 +187,16 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 		// Compute which handle was selected.
 		Rectangle a = getImagePos();
 		// Inner, user selected areas
-		int cx = (int) (a.x + session.contentX.getMin() * a.width);
-		int cy = (int) (a.y + session.contentY.getMin() * a.height);
-		int cw = (int) (session.contentX.gap() * a.width);
-		int ch = (int) (session.contentY.gap() * a.height);
+		int cx = (int) (a.x + session.getContentX().getMin() * a.width);
+		int cy = (int) (a.y + session.getContentY().getMin() * a.height);
+		int cw = (int) (session.getContentX().gap() * a.width);
+		int ch = (int) (session.getContentY().gap() * a.height);
 		
 		// Inner, user selected areas (stretches)
-		int sx = (int) (a.x + session.stretchX.getMin() * a.width);
-		int sy = (int) (a.y + session.stretchY.getMin() * a.height);
-		int sw = (int) (session.stretchX.gap() * a.width);
-		int sh = (int) (session.stretchY.gap() * a.height);
+		int sx = (int) (a.x + session.getStretchX().getMin() * a.width);
+		int sy = (int) (a.y + session.getStretchY().getMin() * a.height);
+		int sw = (int) (session.getStretchX().gap() * a.width);
+		int sh = (int) (session.getStretchY().gap() * a.height);
 		// Outer, image size based areas
 		int x2 = a.x;
 		int y2 = a.y;
@@ -240,36 +240,36 @@ public class NinePatchPanel extends ImagePanel implements MouseListener, MouseMo
 		Rectangle a = getImagePos();
 		switch(selectedItem) {
 		case STRETCH_X_MIN:
-			session.stretchX.setMin((float)(e.getX() - a.x) / a.width);
+			session.getStretchX().setMin((float)(e.getX() - a.x) / a.width);
 			repaint();
 			break;
 		case STRETCH_X_MAX:
-			session.stretchX.setMax((float)(e.getX() - a.x) / a.width);
+			session.getStretchX().setMax((float)(e.getX() - a.x) / a.width);
 			repaint();
 			break;
 		case STRETCH_Y_MIN:
-			session.stretchY.setMin((float)(e.getY() - a.y) / a.height);
+			session.getStretchY().setMin((float)(e.getY() - a.y) / a.height);
 			repaint();
 			break;
 		case STRETCH_Y_MAX:
-			session.stretchY.setMax((float)(e.getY() - a.y) / a.height);
+			session.getStretchY().setMax((float)(e.getY() - a.y) / a.height);
 			repaint();
 			break;
 			
 		case CONTENT_X_MIN:
-			session.contentX.setMin((float)(e.getX() - a.x) / a.width);
+			session.getContentX().setMin((float)(e.getX() - a.x) / a.width);
 			repaint();
 			break;
 		case CONTENT_X_MAX:
-			session.contentX.setMax((float)(e.getX() - a.x) / a.width);
+			session.getContentX().setMax((float)(e.getX() - a.x) / a.width);
 			repaint();
 			break;
 		case CONTENT_Y_MIN:
-			session.contentY.setMin((float)(e.getY() - a.y) / a.height);
+			session.getContentY().setMin((float)(e.getY() - a.y) / a.height);
 			repaint();
 			break;
 		case CONTENT_Y_MAX:
-			session.contentY.setMax((float)(e.getY() - a.y) / a.height);
+			session.getContentY().setMax((float)(e.getY() - a.y) / a.height);
 			repaint();
 			break;
 		}
