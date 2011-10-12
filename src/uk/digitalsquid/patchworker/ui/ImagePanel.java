@@ -197,10 +197,9 @@ public class ImagePanel extends PatternPanel implements ComponentListener, FileE
 	@Override public void drawingNinePatch(boolean isNinePatch) { }
 
 	@Override
-	public void minMaxChanged() {
-	}
-
+	public void minMaxChanged() { }
 	@Override
-	public void minMaxLockChanged() {
-	}
+	public void minMaxLockChanged() { }
+	@Override
+	public void minMaxCountChanged() { }
 }

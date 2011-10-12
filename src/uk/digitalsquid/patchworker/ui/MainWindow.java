@@ -21,6 +21,7 @@
 package uk.digitalsquid.patchworker.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -226,7 +227,14 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				
 				// Npatch options
 				final JSpinner patchesX = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+				Dimension size = patchesX.getPreferredSize();
+				size.width = 60;
+				patchesX.setPreferredSize(size);
+				patchesX.setMaximumSize(size);
 				final JSpinner patchesY = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+				patchesY.setPreferredSize(size);
+				patchesY.setMaximumSize(size);
+				
 				patchesX.addChangeListener(new ChangeListener() {
 					@Override
 					public void stateChanged(ChangeEvent e) {
@@ -237,7 +245,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				patchesY.addChangeListener(new ChangeListener() {
 					@Override
 					public void stateChanged(ChangeEvent e) {
-						int patches = (Integer) patchesX.getModel().getValue();
+						int patches = (Integer) patchesY.getModel().getValue();
 						session.setStretchYCount(patches);
 					}
 				});
@@ -246,7 +254,23 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 				panel.add(new JLabel("Stretch areas: "));
 				panel.add(limit);
 				panel.add(mirrored);
+				panel.add(Box.createHorizontalStrut(20));
+				
+				panel.add(new JLabel("Number of areas: Left: "));
+				panel.add(patchesY);
+				panel.add(new JLabel("Top: "));
+				panel.add(patchesX);
 				panel.add(Box.createHorizontalGlue());
+				
+				/*
+				JPanel yPanel = new JPanel();
+				yPanel.add(patchesY);
+				panel.add(yPanel);
+				panel.add(new JLabel("Top: "));
+				JPanel xPanel = new JPanel();
+				xPanel.add(patchesX);
+				panel.add(xPanel);
+				 */
 				
 				mainPanel.add(panel, BorderLayout.NORTH);
 			}
@@ -343,5 +367,9 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 
 	@Override
 	public void minMaxLockChanged() {
+	}
+
+	@Override
+	public void minMaxCountChanged() {
 	}
 }

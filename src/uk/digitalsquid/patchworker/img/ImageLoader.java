@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import org.apache.batik.transcoder.TranscoderException;
 
 import uk.digitalsquid.patchworker.Session;
+import uk.digitalsquid.patchworker.util.misc.MinMax;
 
 /**
  * Something that can render an image
@@ -105,18 +106,22 @@ public abstract class ImageLoader {
 				
 				g2.setColor(Color.BLACK);
 				
-				// X top
-				g2.drawLine(
-						(int) ((float)width * session.getStretchX().getMin() + 1),
-						0,
-						(int) ((float)width * session.getStretchX().getMax() + 1),
-						0);
-				// Y Left
-				g2.drawLine(
-						0,
-						(int) ((float)height * session.getStretchY().getMin() + 1),
-						0,
-						(int) ((float)height * session.getStretchY().getMax() + 1));
+				for(MinMax stretchX : session.getStretchX()) {
+					// X top
+					g2.drawLine(
+							(int) ((float)width * stretchX.getMin() + 1),
+							0,
+							(int) ((float)width * stretchX.getMax() + 1),
+							0);
+				}
+				for(MinMax stretchY : session.getStretchY()) {
+					// Y Left
+					g2.drawLine(
+							0,
+							(int) ((float)height * stretchY.getMin() + 1),
+							0,
+							(int) ((float)height * stretchY.getMax() + 1));
+				}
 				// X Bottom
 				g2.drawLine(
 						(int) ((float)width * session.getContentX().getMin() + 1),

@@ -60,4 +60,9 @@ public interface FileEvents {
 	 * Called when the lock / mirror settings are changed for one of the {@link MinMax}
 	 */
 	public void minMaxLockChanged();
+	
+	/**
+	 * Called when a big change happens to a MinMax
+	 */
+	public void minMaxCountChanged();
 }

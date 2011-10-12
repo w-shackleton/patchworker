@@ -258,10 +258,10 @@ public final class Session {
 	private void resetLocations(boolean onlyStretch) {
 		// Spread out over equal area
 		for(int i = 0; i < getStretchXCount(); i++) {
-			getStretchX(i).setMinMax((i+1) / (getStretchXCount()+1));
+			getStretchX(i).setMinMax(((float)i+1) / ((float)getStretchXCount()+1));
 		}
 		for(int i = 0; i < getStretchYCount(); i++) {
-			getStretchY(i).setMinMax((i+1) / (getStretchXCount()+1));
+			getStretchY(i).setMinMax(((float)i+1) / ((float)getStretchYCount()+1));
 		}
 		if(!onlyStretch) {
 			getContentX().setMinMax(0.25f, 0.75f);
@@ -301,11 +301,14 @@ public final class Session {
 	 * @param number
 	 */
 	public synchronized void setStretchXCount(int number) {
+		MinMax copyFrom = stretchY[0]; // Should never be less than 1
 		stretchX = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchX[i] = new MinMax(broadcast);
+			stretchX[i].copyFrom(copyFrom);
 		}
 		resetLocations(true);
+		broadcast.minMaxCountChanged();
 	}
 
 	/**
@@ -331,11 +334,14 @@ public final class Session {
 	 * @param number
 	 */
 	public synchronized void setStretchYCount(int number) {
+		MinMax copyFrom = stretchY[0]; // Should never be less than 1
 		stretchY = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchY[i] = new MinMax(broadcast);
+			stretchY[i].copyFrom(copyFrom);
 		}
 		resetLocations(true);
+		broadcast.minMaxCountChanged();
 	}
 
 	/**
@@ -384,6 +390,13 @@ public final class Session {
 		public void minMaxLockChanged() {
 			for(FileEvents i : broadcastList) {
 				i.minMaxLockChanged();
+			}
+		}
+
+		@Override
+		public void minMaxCountChanged() {
+			for(FileEvents i : broadcastList) {
+				i.minMaxCountChanged();
 			}
 		}
 	};

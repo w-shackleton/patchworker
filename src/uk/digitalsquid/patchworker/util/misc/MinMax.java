@@ -20,9 +20,6 @@
 
 package uk.digitalsquid.patchworker.util.misc;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import uk.digitalsquid.patchworker.FileEvents;
 
 /**
@@ -46,6 +43,7 @@ public final class MinMax {
 	public MinMax(FileEvents notifyEvents) {
 		minBound = 0;
 		maxBound = 1;
+		broadcast = notifyEvents;
 	}
 	
 	public void reset() {
@@ -81,7 +79,7 @@ public final class MinMax {
 	public void setLocked(boolean locked) {
 		this.locked = locked;
 		min = max = (min + max) / 2;
-		broadcast.lockChanged();
+		broadcast.minMaxLockChanged();
 	}
 	public boolean isLocked() {
 		return locked;
@@ -98,7 +96,7 @@ public final class MinMax {
 	public void setMirrored(boolean mirrored) {
 		this.mirrored = mirrored;
 		mirror();
-		broadcast.lockChanged();
+		broadcast.minMaxLockChanged();
 	}
 	public boolean isMirrored() {
 		return mirrored;
@@ -115,6 +113,7 @@ public final class MinMax {
 			max = min;
 		mirror();
 		normalise();
+		broadcast.minMaxChanged();
 	}
 	public void setMax(float max) {
 		this.max = max;
@@ -122,6 +121,7 @@ public final class MinMax {
 			min = max;
 		mirror();
 		normalise();
+		broadcast.minMaxChanged();
 	}
 	
 	/**
@@ -134,6 +134,7 @@ public final class MinMax {
 		this.max = max;
 		mirror();
 		normalise();
+		broadcast.minMaxChanged();
 	}
 	
 	/**
@@ -149,43 +150,13 @@ public final class MinMax {
 		broadcast.minMaxChanged();
 	}
 	
-	/**
-	 * Events for when the MinMax class changes
-	 * @author william
-	 *
-	 */
-	public static interface OnMinMaxChangeListener {
-		public void lockChanged();
-		/**
-		 * The minMax has changed. Only called when someone calls MinMax.notifyChanged.
-		 */
-		public void minMaxChanged();
-	}
-	
-	private OnMinMaxChangeListener broadcast = new OnMinMaxChangeListener() {
-		
-		@Override
-		public void minMaxChanged() {
-			for(OnMinMaxChangeListener l : broadcastList) {
-				l.minMaxChanged();
-			}
-		}
-		
-		@Override
-		public void lockChanged() {
-			for(OnMinMaxChangeListener l : broadcastList) {
-				l.lockChanged();
-			}
-		}
-	};
-	
-	private List<OnMinMaxChangeListener> broadcastList = new LinkedList<MinMax.OnMinMaxChangeListener>();
+	private final FileEvents broadcast;
 	
 	/**
-	 * Adds a property changed listener
-	 * @param l
+	 * Copies settings BUT NOT VALUES from the original {@link MinMax}
 	 */
-	public void addListener(OnMinMaxChangeListener l) {
-		broadcastList.add(l);
+	public void copyFrom(MinMax from) {
+		setMirrored(from.isMirrored());
+		setLocked(from.isLocked());
 	}
 }
