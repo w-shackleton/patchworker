@@ -71,7 +71,12 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 	/**
 	 * The name to save the image as.
 	 */
-	private String imageName;
+	private JTextField imageName;
+	
+	/**
+	 * The name of the original source file
+	 */
+	private String origFileName;
 	
 	/**
 	 * File type, as given by values in Exporter.java
@@ -105,8 +110,7 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		addWindowListener(this);
 		
 		File file= new File(session.getUri().replace("file://", "").replace("file:", ""));
-		String fileName = file.getName();
-		imageName = fileName.substring(0, fileName.lastIndexOf('.'));
+		origFileName = file.getName();
 		
 		loadComponents();
 	}
@@ -278,17 +282,11 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 			JPanel namePanel = new JPanel();
 			namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.LINE_AXIS));
 			
-			final JTextField name = new JTextField(imageName);
-			name.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					imageName = name.getText();
-					validateFields();
-				}
-			});
+			String name = origFileName.substring(0, origFileName.lastIndexOf('.'));
+			imageName = new JTextField(name);
 			
 			namePanel.add(new JLabel("File name:"));
-			namePanel.add(name);
+			namePanel.add(imageName);
 			
 			panel.add(namePanel);
 		}
@@ -336,7 +334,10 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						exporter = new Exporter(session, imageName, ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
+						if(!validateFields()) {
+							throw new IllegalArgumentException("Fields not valid");
+						}
+						exporter = new Exporter(session, imageName.getText(), ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
 						
 						session.thread.queueMessage(exporter);
 						
@@ -382,11 +383,18 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		pack();
 	}
 	
-	protected void validateFields() {
-		if(!imageName.equals("") && !session.getDestination().equals(""))
-			save.setEnabled(true);
-		else
-			save.setEnabled(false);
+	/**
+	 * Checks if the fields are valid, then enables / disables the save button
+	 * @return <code>true</code> if fields are valid
+	 */
+	protected boolean validateFields() {
+		if(!imageName.getText().equals("") && !session.getDestination().equals("")) {
+			// save.setEnabled(true);
+			return true;
+		} else {
+			// save.setEnabled(false);
+			return false;
+		}
 	}
 
 	@Override public void windowActivated(WindowEvent e) { }
