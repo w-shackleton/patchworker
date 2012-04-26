@@ -321,6 +321,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
+		session.saveFilePreferences();
 		dispose();
 	}
 	

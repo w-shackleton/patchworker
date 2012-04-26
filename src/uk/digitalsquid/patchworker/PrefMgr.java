@@ -20,7 +20,12 @@
 
 package uk.digitalsquid.patchworker;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -32,6 +37,11 @@ import java.util.prefs.Preferences;
 public final class PrefMgr {
 	
 	private static final Preferences prefs = Preferences.userNodeForPackage(PrefMgr.class);
+	
+	/**
+	 * Saves user options at a per image level.
+	 */
+	private static HashMap<String, SavedState> imagePreferences;
 
 	public static String getExportUri() {
 		return prefs.get("exportUri", "");
@@ -60,5 +70,38 @@ public final class PrefMgr {
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T> T getSerializable(String name) throws IOException, ClassNotFoundException {
+		byte[] bytes = prefs.getByteArray(name, null);
+		if(bytes == null) return null;
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
+		ObjectInputStream stream = new ObjectInputStream(byteStream);
+		try {
+			T obj = (T) stream.readObject();
+			stream.close();
+			return obj;
+		} catch(ClassCastException e) {
+			throw new ClassNotFoundException("Failed to cast object to specified type", e);
+		} finally {
+			stream.close();
+		}
+	}
+	private static void putSerializable(String name, Serializable value) {
+		
+	}
+	
+	public static SavedState getImagePreferences(String url) {
+		if(imagePreferences == null) {
+			try {
+				imagePreferences = getSerializable("imagePrefs");
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 }

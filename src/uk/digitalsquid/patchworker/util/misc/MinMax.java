@@ -20,6 +20,8 @@
 
 package uk.digitalsquid.patchworker.util.misc;
 
+import java.io.Serializable;
+
 import uk.digitalsquid.patchworker.FileEvents;
 
 /**
@@ -27,7 +29,9 @@ import uk.digitalsquid.patchworker.FileEvents;
  * @author william
  *
  */
-public final class MinMax {
+public final class MinMax implements Serializable {
+	private static final long serialVersionUID = 884233353747061200L;
+	
 	private float min;
 	private float max;
 	

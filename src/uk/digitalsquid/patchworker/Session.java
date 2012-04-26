@@ -145,6 +145,7 @@ public final class Session {
 	 * @param uri
 	 */
 	public void loadDocument(final String uri) {
+		saveFilePreferences(); // Saves old file settings if there is an open file
 		this.uri = uri;
 		if(uri.endsWith(".svg")) {
 			type = TYPE_SVG;
@@ -400,4 +401,13 @@ public final class Session {
 			}
 		}
 	};
+	
+	/**
+	 * If an image is open, saves the current {@link MinMax} settings and user options to the (class)
+	 * so that they can be loaded next time
+	 */
+	public void saveFilePreferences() {
+		if(!isFileLoaded()) return;
+		// TODO: Implement
+	}
 }
