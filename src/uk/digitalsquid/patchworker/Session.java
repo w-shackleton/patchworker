@@ -187,6 +187,8 @@ public final class Session {
 				public void done(SvgLoader result) {
 					loader = result;
 					broadcast.fileOpened();
+					
+					loadFilePreferences();
 				}
 			};
 		} else { // Should only be rasters now.
@@ -211,6 +213,8 @@ public final class Session {
 				public void done(BufferedImage result) {
 					loader = new RasterLoader(result);
 					broadcast.fileOpened();
+					
+					loadFilePreferences();
 				}
 			};
 		}
@@ -306,7 +310,7 @@ public final class Session {
 		stretchX = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchX[i] = new MinMax(broadcast);
-			stretchX[i].copyFrom(copyFrom);
+			stretchX[i].copySettingsFrom(copyFrom);
 		}
 		resetLocations(true);
 		broadcast.minMaxCountChanged();
@@ -339,7 +343,7 @@ public final class Session {
 		stretchY = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchY[i] = new MinMax(broadcast);
-			stretchY[i].copyFrom(copyFrom);
+			stretchY[i].copySettingsFrom(copyFrom);
 		}
 		resetLocations(true);
 		broadcast.minMaxCountChanged();
@@ -408,6 +412,18 @@ public final class Session {
 	 */
 	public void saveFilePreferences() {
 		if(!isFileLoaded()) return;
-		// TODO: Implement
+		System.out.println("Writing preferences for image " + uri);
+		PrefMgr.setImagePreferences(uri, new SavedState(this));
+	}
+	
+	public void loadFilePreferences() {
+		System.out.println("Loading preferences for image " + uri);
+		SavedState restore = PrefMgr.getImagePreferences(uri);
+		contentX.copyFrom(restore.getContentX());
+		contentY.copyFrom(restore.getContentY());
+		stretchX = MinMax.cloneArray(restore.getStretchX());
+		stretchY = MinMax.cloneArray(restore.getStretchY());
+		destination = restore.getDestination();
+		isNinePatch = restore.isNinePatch();
 	}
 }

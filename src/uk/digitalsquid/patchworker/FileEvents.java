@@ -65,4 +65,14 @@ public interface FileEvents {
 	 * Called when a big change happens to a MinMax
 	 */
 	public void minMaxCountChanged();
+	
+	public static final FileEvents NULL_EVTS = new FileEvents() {
+		@Override public void openFailed(String reason) { }
+		@Override public void minMaxLockChanged() { }
+		@Override public void minMaxCountChanged() { }
+		@Override public void minMaxChanged() { }
+		@Override public void fileOpening() { }
+		@Override public void fileOpened() { }
+		@Override public void drawingNinePatch(boolean isNinePatch) { }
+	};
 }

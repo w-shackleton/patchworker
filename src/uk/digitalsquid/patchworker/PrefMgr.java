@@ -21,9 +21,11 @@
 package uk.digitalsquid.patchworker;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
@@ -88,10 +90,22 @@ public final class PrefMgr {
 			stream.close();
 		}
 	}
-	private static void putSerializable(String name, Serializable value) {
+	private static void putSerializable(String name, Serializable value) throws IOException {
+		ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+		ObjectOutputStream stream = new ObjectOutputStream(byteOutStream);
+		stream.writeObject(value);
+		stream.close();
+		byte[] data = byteOutStream.toByteArray();
+		byteOutStream.close();
 		
+		prefs.putByteArray(name, data);
 	}
 	
+	/**
+	 * Gets the {@link SavedState} for the image at the given path on the computer.
+	 * @param url
+	 * @return
+	 */
 	public static SavedState getImagePreferences(String url) {
 		if(imagePreferences == null) {
 			try {
@@ -102,6 +116,31 @@ public final class PrefMgr {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		if(imagePreferences == null) // Create
+			imagePreferences = new HashMap<String, SavedState>();
+		return imagePreferences.get(url);
+	}
+	
+	public static synchronized void setImagePreferences(String url, SavedState state) {
+		if(imagePreferences == null) {
+			try {
+				imagePreferences = getSerializable("imagePrefs");
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if(imagePreferences == null) // Create
+			imagePreferences = new HashMap<String, SavedState>();
+		
+		imagePreferences.put(url, state);
+		
+		// Write back again
+		try {
+			putSerializable("imagePrefs", imagePreferences);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
