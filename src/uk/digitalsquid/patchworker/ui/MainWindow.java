@@ -68,6 +68,8 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 	
 	private Session session = new Session();
 	
+	private JMenuItem enableNormalImage;
+	
 	NinePatchPanel imagePanel;
 	
 	private JMenuItem exportMenuItem;
@@ -154,7 +156,7 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 			mb.add(fileMenu);
 			
 			JMenu optionsMenu = new JMenu("Options");
-			final JMenuItem enableNormalImage = new JCheckBoxMenuItem("Export normal images (not 9-patch)");
+			enableNormalImage = new JCheckBoxMenuItem("Export normal images (not 9-patch)");
 			enableNormalImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 			optionsMenu.add(enableNormalImage);
 			enableNormalImage.addItemListener(new ItemListener() {
@@ -360,7 +362,10 @@ public class MainWindow extends JFrame implements WindowListener, FileEvents {
 		JOptionPane.showMessageDialog(this, "Failed to load image", "Failed to load", JOptionPane.ERROR_MESSAGE);
 	}
 
-	@Override public void drawingNinePatch(boolean isNinePatch) { }
+	@Override
+	public void drawingNinePatch(boolean isNinePatch) {
+		enableNormalImage.setSelected(!isNinePatch);
+	}
 
 	@Override
 	public void minMaxChanged() {

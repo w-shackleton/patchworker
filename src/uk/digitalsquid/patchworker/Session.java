@@ -423,7 +423,7 @@ public final class Session {
 		contentY.copyFrom(restore.getContentY());
 		stretchX = MinMax.cloneArray(restore.getStretchX());
 		stretchY = MinMax.cloneArray(restore.getStretchY());
-		destination = restore.getDestination();
-		isNinePatch = restore.isNinePatch();
+		setDestination(restore.getDestination());
+		setNinePatch(restore.isNinePatch());
 	}
 }

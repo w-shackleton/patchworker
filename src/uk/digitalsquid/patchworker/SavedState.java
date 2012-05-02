@@ -37,16 +37,13 @@ public class SavedState implements Serializable {
 	public SavedState(Session sessionToSave) {
 		contentX = new MinMax(sessionToSave.getContentX());
 		contentY = new MinMax(sessionToSave.getContentY());
-		
 		stretchX = MinMax.cloneArray(sessionToSave.getStretchX());
 		stretchY = MinMax.cloneArray(sessionToSave.getStretchY());
-		System.out.println("Saved MinMax: " + stretchX[0].getMin());
 		destination = sessionToSave.getDestination();
 		isNinePatch = sessionToSave.isNinePatch();
 	}
 
 	public MinMax getContentX() {
-		System.out.println("Restored MinMax: " + stretchX[0].getMin());
 		return contentX;
 	}
 
