@@ -145,6 +145,7 @@ public final class Session {
 	 * @param uri
 	 */
 	public void loadDocument(final String uri) {
+		saveFilePreferences(); // Saves old file settings if there is an open file
 		this.uri = uri;
 		if(uri.endsWith(".svg")) {
 			type = TYPE_SVG;
@@ -186,6 +187,8 @@ public final class Session {
 				public void done(SvgLoader result) {
 					loader = result;
 					broadcast.fileOpened();
+					
+					loadFilePreferences();
 				}
 			};
 		} else { // Should only be rasters now.
@@ -210,6 +213,8 @@ public final class Session {
 				public void done(BufferedImage result) {
 					loader = new RasterLoader(result);
 					broadcast.fileOpened();
+					
+					loadFilePreferences();
 				}
 			};
 		}
@@ -305,7 +310,7 @@ public final class Session {
 		stretchX = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchX[i] = new MinMax(broadcast);
-			stretchX[i].copyFrom(copyFrom);
+			stretchX[i].copySettingsFrom(copyFrom);
 		}
 		resetLocations(true);
 		broadcast.minMaxCountChanged();
@@ -338,7 +343,7 @@ public final class Session {
 		stretchY = new MinMax[number];
 		for(int i = 0; i < number; i++) {
 			stretchY[i] = new MinMax(broadcast);
-			stretchY[i].copyFrom(copyFrom);
+			stretchY[i].copySettingsFrom(copyFrom);
 		}
 		resetLocations(true);
 		broadcast.minMaxCountChanged();
@@ -400,4 +405,25 @@ public final class Session {
 			}
 		}
 	};
+	
+	/**
+	 * If an image is open, saves the current {@link MinMax} settings and user options to the (class)
+	 * so that they can be loaded next time
+	 */
+	public void saveFilePreferences() {
+		if(!isFileLoaded()) return;
+		System.out.println("Writing preferences for image " + uri);
+		PrefMgr.setImagePreferences(uri, new SavedState(this));
+	}
+	
+	public void loadFilePreferences() {
+		System.out.println("Loading preferences for image " + uri);
+		SavedState restore = PrefMgr.getImagePreferences(uri);
+		contentX.copyFrom(restore.getContentX());
+		contentY.copyFrom(restore.getContentY());
+		stretchX = MinMax.cloneArray(restore.getStretchX());
+		stretchY = MinMax.cloneArray(restore.getStretchY());
+		setDestination(restore.getDestination());
+		setNinePatch(restore.isNinePatch());
+	}
 }

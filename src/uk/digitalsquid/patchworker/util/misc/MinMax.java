@@ -20,6 +20,8 @@
 
 package uk.digitalsquid.patchworker.util.misc;
 
+import java.io.Serializable;
+
 import uk.digitalsquid.patchworker.FileEvents;
 
 /**
@@ -27,7 +29,9 @@ import uk.digitalsquid.patchworker.FileEvents;
  * @author william
  *
  */
-public final class MinMax {
+public final class MinMax implements Serializable, Cloneable {
+	private static final long serialVersionUID = 884233353747061200L;
+	
 	private float min;
 	private float max;
 	
@@ -44,6 +48,18 @@ public final class MinMax {
 		minBound = 0;
 		maxBound = 1;
 		broadcast = notifyEvents;
+	}
+	
+	public MinMax(MinMax copyFrom) {
+		min = copyFrom.getMin();
+		max = copyFrom.getMax();
+		minBound = copyFrom.minBound;
+		maxBound = copyFrom.maxBound;
+		
+		locked = copyFrom.locked;
+		mirrored = copyFrom.mirrored;
+		
+		broadcast = FileEvents.NULL_EVTS;
 	}
 	
 	public void reset() {
@@ -79,7 +95,7 @@ public final class MinMax {
 	public void setLocked(boolean locked) {
 		this.locked = locked;
 		min = max = (min + max) / 2;
-		broadcast.minMaxLockChanged();
+		if(broadcast != null) broadcast.minMaxLockChanged();
 	}
 	public boolean isLocked() {
 		return locked;
@@ -96,7 +112,7 @@ public final class MinMax {
 	public void setMirrored(boolean mirrored) {
 		this.mirrored = mirrored;
 		mirror();
-		broadcast.minMaxLockChanged();
+		if(broadcast != null) broadcast.minMaxLockChanged();
 	}
 	public boolean isMirrored() {
 		return mirrored;
@@ -113,7 +129,7 @@ public final class MinMax {
 			max = min;
 		mirror();
 		normalise();
-		broadcast.minMaxChanged();
+		if(broadcast != null) broadcast.minMaxChanged();
 	}
 	public void setMax(float max) {
 		this.max = max;
@@ -121,7 +137,7 @@ public final class MinMax {
 			min = max;
 		mirror();
 		normalise();
-		broadcast.minMaxChanged();
+		if(broadcast != null) broadcast.minMaxChanged();
 	}
 	
 	/**
@@ -134,7 +150,7 @@ public final class MinMax {
 		this.max = max;
 		mirror();
 		normalise();
-		broadcast.minMaxChanged();
+		if(broadcast != null) broadcast.minMaxChanged();
 	}
 	
 	/**
@@ -147,16 +163,29 @@ public final class MinMax {
 	}
 	
 	public void notifyChanged() {
-		broadcast.minMaxChanged();
+		if(broadcast != null) broadcast.minMaxChanged();
 	}
 	
-	private final FileEvents broadcast;
+	private final transient FileEvents broadcast;
 	
 	/**
 	 * Copies settings BUT NOT VALUES from the original {@link MinMax}
 	 */
-	public void copyFrom(MinMax from) {
+	public void copySettingsFrom(MinMax from) {
 		setMirrored(from.isMirrored());
 		setLocked(from.isLocked());
+	}
+	
+	public void copyFrom(MinMax from) {
+		copySettingsFrom(from);
+		setMinMax(from.getMin(), from.getMax());
+	}
+	
+	public static MinMax[] cloneArray(MinMax[] from) {
+		MinMax[] ret = new MinMax[from.length];
+		int i = 0;
+		for(MinMax n : from)
+			ret[i++] = new MinMax(n);
+		return ret;
 	}
 }
