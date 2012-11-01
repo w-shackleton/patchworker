@@ -83,7 +83,13 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 	 */
 	private int fileType;
 	
+	/**
+	 * The multiplier for the reference dip. For mdpi this will be 1.
+	 */
+	private float referenceScale;
+	
 	private JLabel ldpiStatus, mdpiStatus, hdpiStatus, xdpiStatus;
+	private JLabel imageSizeLabel;
 	
 	private JButton save;
 	
@@ -150,6 +156,49 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 		}
 		panel.add(Box.createVerticalStrut(5));
 		
+		// Reference resolution selector
+		{
+			JPanel destPanel = new JPanel();
+			destPanel.setLayout(new BoxLayout(destPanel, BoxLayout.LINE_AXIS));
+			
+			final JComboBox selection = new JComboBox(new String[] {
+					"ldpi",
+					"mdpi (default)",
+					"hdpi",
+					"xhdpi"
+			});
+			selection.setSelectedIndex(1);
+			selection.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					switch(selection.getSelectedIndex()) {
+					case 0:
+						referenceScale = Exporter.LDPI_SCALE;
+						imageSizeLabel.setText("Image size (ldpi):");
+						break;
+					case 1:
+						referenceScale = Exporter.MDPI_SCALE;
+						imageSizeLabel.setText("Image size (dip):");
+						break;
+					case 2:
+						referenceScale = Exporter.HDPI_SCALE;
+						imageSizeLabel.setText("Image size (hdpi):");
+						break;
+					case 3:
+						referenceScale = Exporter.XDPI_SCALE;
+						imageSizeLabel.setText("Image size (xhdpi):");
+						break;
+					}
+				}
+			});
+			
+			destPanel.add(new JLabel("Reference density: "));
+			destPanel.add(selection);
+			
+			panel.add(destPanel);
+		}
+		panel.add(Box.createVerticalStrut(5));
+		
 		// Size (dip)
 		{
 			JPanel sizePanel = new JPanel();
@@ -205,7 +254,8 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 				}
 			});
 			
-			sizePanel.add(new JLabel("Image size (dip):"));
+			imageSizeLabel = new JLabel("Image size (dip):");
+			sizePanel.add(imageSizeLabel);
 			sizePanel.add(sizexText);
 			sizePanel.add(new JLabel("x"));
 			sizePanel.add(sizeyText);
@@ -337,7 +387,17 @@ public final class ExportDialog extends JDialog implements WindowListener, Expor
 						if(!validateFields()) {
 							throw new IllegalArgumentException("Fields not valid");
 						}
-						exporter = new Exporter(session, imageName.getText(), ExportDialog.this, ExportDialog.this.fileType, ldpi, mdpi, hdpi, xdpi, sizex, sizey);
+						exporter = new Exporter(
+								session,
+								imageName.getText(),
+								ExportDialog.this,
+								ExportDialog.this.fileType,
+								ldpi,
+								mdpi,
+								hdpi,
+								xdpi,
+								(int) (sizex / referenceScale),
+								(int) (sizey / referenceScale));
 						
 						session.thread.queueMessage(exporter);
 						

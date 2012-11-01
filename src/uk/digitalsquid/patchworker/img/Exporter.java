@@ -40,6 +40,11 @@ public final class Exporter extends ProcessingMessage<String> {
 	public static final int IMG_PNG = 2;
 	public static final int IMG_GIF = 3;
 	
+	public static final float LDPI_SCALE = 0.75f;
+	public static final float MDPI_SCALE = 1;
+	public static final float HDPI_SCALE = 1.5f;
+	public static final float XDPI_SCALE = 2;
+	
 	/**
 	 * Export folder names
 	 */
@@ -136,25 +141,25 @@ public final class Exporter extends ProcessingMessage<String> {
 			if(ldpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_LDPI);
 				path = resFolder + "/" + DRAWABLE_LDPI + "/" + filename;
-				saveImage(0.75f, fileType, path);
+				saveImage(LDPI_SCALE, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_LDPI);
 			}
 			if(mdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_MDPI);
 				path = resFolder + "/" + DRAWABLE_MDPI + "/" + filename;
-				saveImage(1f, fileType, path);
+				saveImage(MDPI_SCALE, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_MDPI);
 			}
 			if(hdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_HDPI);
 				path = resFolder + "/" + DRAWABLE_HDPI + "/" + filename;
-				saveImage(1.5f, fileType, path);
+				saveImage(HDPI_SCALE, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_HDPI);
 			}
 			if(xdpi && !cancelled) {
 				callbackUIProxy.exportStarted(ExportStatus.IMAGE_XDPI);
 				path = resFolder + "/" + DRAWABLE_XDPI + "/" + filename;
-				saveImage(2f, fileType, path);
+				saveImage(XDPI_SCALE, fileType, path);
 				callbackUIProxy.exportFinished(ExportStatus.IMAGE_XDPI);
 			}
 		} catch(TranscoderException e) {
@@ -182,7 +187,7 @@ public final class Exporter extends ProcessingMessage<String> {
 	public void cancel() {
 		cancelled = true;
 	}
-	
+
 	public static interface ExportStatus {
 		public static final int IMAGE_LDPI = 1;
 		public static final int IMAGE_MDPI = 2;
