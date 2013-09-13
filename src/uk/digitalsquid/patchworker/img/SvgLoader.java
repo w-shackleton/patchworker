@@ -59,8 +59,8 @@ public class SvgLoader extends ImageLoader {
 			size.height = 1;
 		} else {
 			try {
-			size.width = Integer.parseInt(width);
-			size.height = Integer.parseInt(height);
+			size.width = Math.round(Float.parseFloat(width));
+			size.height = Math.round(Float.parseFloat(height));
 			} catch(NumberFormatException e) {
 				size.width = 1;
 				size.height = 1;
